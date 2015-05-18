@@ -1,5 +1,12 @@
 
 var AWS		= require('aws-sdk'); 
+var Pusher	= require('pusher');
+
+var pusher = new Pusher({
+	appId: '120682',
+	key: 'af071ada76d9942edfb4',
+	secret: '56978c0c8db02aa2e337'
+});
 
 AWS.config.update({
 	accessKeyId: process.env.accessKey, 
@@ -24,7 +31,12 @@ var sqsUrl = process.env.SQS_URL;
  
 					var receiptId = data.Messages[0].ReceiptHandle;	
 					
-					console.log(receiptId);
+					console.log(receiptId, data.Messages[0].Body);
+					
+					pusher.trigger('test_channel', 'my_event', {
+						"message": JSON.parse(data.Messages[0].Body).envelope.headers.referer
+					});
+
 
 					sqs.deleteMessage({
 						QueueUrl: sqsUrl,
