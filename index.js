@@ -1,6 +1,7 @@
 
-var AWS		= require('aws-sdk'); 
-var Pusher	= require('pusher');
+var AWS			= require('aws-sdk'); 
+var Pusher		= require('pusher');
+var UAParser	= require('ua-parser-js');
 
 var pusher = new Pusher({
 	appId: '120682',
@@ -33,8 +34,16 @@ var sqsUrl = process.env.SQS_URL;
 					
 					console.log(receiptId, data.Messages[0].Body);
 					
+					var h = JSON.parse(data.Messages[0].Body).envelope.headers;
+
+					var parser		= new UAParser();
+					parser.setUA(h['user-agent']);
+
 					pusher.trigger('test_channel', 'my_event', {
-						"message": JSON.parse(data.Messages[0].Body).envelope.headers.referer
+						"message": { 
+							referer: h.referer,
+							ua: parser.getResult()
+						}
 					});
 
 
