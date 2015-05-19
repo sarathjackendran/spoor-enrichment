@@ -42,7 +42,8 @@ var sqsUrl = process.env.SQS_URL;
 					pusher.trigger('test_channel', 'my_event', {
 						"message": { 
 							referer: h.referer,
-							ua: parser.getResult()
+							ua: parser.getResult(),
+							country: h['x-geoip-country'] || 'unknown'
 						}
 					});
 
