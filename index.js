@@ -39,7 +39,7 @@ var sqsUrl = process.env.SQS_URL;
 					var parser		= new UAParser();
 					parser.setUA(h['user-agent']);
 
-					if (Math.random() < 0.01) { 
+					if (Math.random() < 2) { 
 						pusher.trigger('test_channel', 'my_event', {
 							"message": { 
 								referer: h.referer,
