@@ -4,9 +4,9 @@ var Pusher		= require('pusher');
 var UAParser	= require('ua-parser-js');
 
 var pusher = new Pusher({
-	appId: '120682',
-	key: 'af071ada76d9942edfb4',
-	secret: '56978c0c8db02aa2e337'
+	appId: '120775',
+	key: '49081db0b492f38c9f37',
+	secret: '5a3aebf15ae9755a5677'
 });
 
 AWS.config.update({
@@ -39,14 +39,15 @@ var sqsUrl = process.env.SQS_URL;
 					var parser		= new UAParser();
 					parser.setUA(h['user-agent']);
 
-					pusher.trigger('test_channel', 'my_event', {
-						"message": { 
-							referer: h.referer,
-							ua: parser.getResult(),
-							country: h['x-geoip-country'] || 'unknown'
-						}
-					});
-
+					if (Math.random() < 0.1) { 
+						pusher.trigger('test_channel', 'my_event', {
+							"message": { 
+								referer: h.referer,
+								ua: parser.getResult(),
+								country: h['x-geoip-country'] || 'unknown'
+							}
+						});
+					}
 
 					sqs.deleteMessage({
 						QueueUrl: sqsUrl,
