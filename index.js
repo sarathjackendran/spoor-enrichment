@@ -82,10 +82,10 @@ var sqsUrl = process.env.SQS_URL;
 							})
 
 						}, function (err) {
-							console.error(err);
+							console.error('ERROR', err);
 						})
 						.catch(function (err) {
-							console.error(err);
+							console.error('ERROR', err);
 						})
 				}
 				
