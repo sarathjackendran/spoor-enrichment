@@ -52,11 +52,11 @@ var sqsUrl = process.env.SQS_URL;
 							// FIXME destructure
 							console.log(all);
 
-							var country = all[0];
-							var referrer = all[1];
-							var time = all[2];
-							var isSubscriber = all[3];
-							var ua = all[4];
+							var country = all[0].country;
+							var referrer = all[1].referrer;
+							var time = all[2].time;
+							var isSubscriber = all[3].isSubscriber;
+							var ua = all[4].userAgent;
 
 							console.log(country, referrer, time, isSubscriber, ua);
 
