@@ -47,10 +47,19 @@ var sqsUrl = process.env.SQS_URL;
 							model.isSubscriber(header['cookie']),
 							model.userAgent(header['user-agent'])
 						])
-						.then(function (country, referrer, time, isSubscriber, ua) {
-					
-							console.log(arguments);
-							
+						.then(function (all) {
+				
+							// FIXME destructure
+							console.log(all);
+
+							var country = all[0];
+							var referrer = all[1];
+							var time = all[2];
+							var isSubscriber = all[3];
+							var ua = all[4];
+
+							console.log(country, referrer, time, isSubscriber, ua);
+
 							if (Math.random() < 0.02) { 
 								pusher.trigger('test_channel', 'my_event', {
 									"message": { 
