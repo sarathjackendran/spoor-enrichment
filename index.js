@@ -34,19 +34,18 @@ var sqsUrl = process.env.SQS_URL;
 				if (data.Messages && data.Messages.length > 0) {
  
 					var receiptId = data.Messages[0].ReceiptHandle;	
-					
 					console.log(receiptId, data.Messages[0].Body);
 					
-					var h = JSON.parse(data.Messages[0].Body).envelope.headers;
+					var header = JSON.parse(data.Messages[0].Body).envelope.headers;
 
 					// Enrichments, each modelled as a promise that resolves with the decoration
 					Promise
 						.all([
-							model.country(h),
-							model.referrer(h['referer']),
+							model.country(header),
+							model.referrer(header['referer']),
 							model.time(),
-							model.isSubscriber(h['cookie']),
-							model.userAgent(h['user-agent'])
+							model.isSubscriber(header['cookie']),
+							model.userAgent(header['user-agent'])
 						])
 						.then(function (country, referrer, time, isSubscriber, ua) {
 					
