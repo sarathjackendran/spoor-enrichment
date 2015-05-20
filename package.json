@@ -11,6 +11,8 @@
   "dependencies": {
     "aws-sdk": "^2.1.28",
     "pusher": "^1.0.5",
-    "ua-parser-js": "^0.7.7"
+    "ua-parser-js": "^0.7.7",
+    "moment": "^2.10.3",
+    "es6-promise": "^2.0.1"
   }
 }

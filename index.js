@@ -2,6 +2,9 @@
 var AWS			= require('aws-sdk'); 
 var Pusher		= require('pusher');
 var UAParser	= require('ua-parser-js');
+var model		= require('./models');
+
+require('es6-promise').polyfill();
 
 var pusher = new Pusher({
 	appId: '120775',
@@ -36,29 +39,42 @@ var sqsUrl = process.env.SQS_URL;
 					
 					var h = JSON.parse(data.Messages[0].Body).envelope.headers;
 
-					var parser		= new UAParser();
-					parser.setUA(h['user-agent']);
-
-					if (Math.random() < 0.01) { 
-						pusher.trigger('test_channel', 'my_event', {
-							"message": { 
-								referer: h.referer,
-								ua: parser.getResult(),
-								country: h['x-geoip-country'] || 'unknown'
+					// Enrichments, each modelled as a promise that resolves with the decoration
+					Promise
+						.all([
+							model.country(h),
+							model.referrer(h['referer']),
+							model.time(),
+							model.isSubscriber(h['cookie']),
+							model.userAgent(h['user-agent'])
+						])
+						.then(function (country, referrer, time, isSubscriber, ua) {
+					
+							console.log(arguments);
+							
+							if (Math.random() < 0.01) { 
+								pusher.trigger('test_channel', 'my_event', {
+									"message": { 
+										referer: referer,
+										ua: ua, 
+										country: country 
+									}
+								});
 							}
-						});
-					}
 
-					sqs.deleteMessage({
-						QueueUrl: sqsUrl,
-						ReceiptHandle: receiptId 	
-					}, function(err, data) {
-						if (err) console.log(err, err.stack); // an error occurred
-						else     console.log('DELETED', data);           // successful response		
-					})
-			
+							// FIXME don't delete message != production
+							
+							sqs.deleteMessage({
+								QueueUrl: sqsUrl,
+								ReceiptHandle: receiptId 	
+							}, function(err, data) {
+								if (err) console.log(err, err.stack); // an error occurred
+								else     console.log('DELETED', data);           // successful response		
+							})
+
+						})
 				}
-	
+				
 				pollQueueForMessages();
 			}
 	});
