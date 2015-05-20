@@ -51,7 +51,7 @@ var sqsUrl = process.env.SQS_URL;
 					
 							console.log(arguments);
 							
-							if (Math.random() < 1) { 
+							if (Math.random() < 0.02) { 
 								pusher.trigger('test_channel', 'my_event', {
 									"message": { 
 										referer: referrer,
