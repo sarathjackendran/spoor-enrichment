@@ -51,12 +51,13 @@ var sqsUrl = process.env.SQS_URL;
 					
 							console.log(arguments);
 							
-							if (Math.random() < 0.01) { 
+							if (Math.random() < 1) { 
 								pusher.trigger('test_channel', 'my_event', {
 									"message": { 
-										referer: referer,
+										referer: referrer,
 										ua: ua, 
-										country: country 
+										country: country,
+										isSubscriber: isSubscriber
 									}
 								});
 							}
@@ -71,6 +72,11 @@ var sqsUrl = process.env.SQS_URL;
 								else     console.log('DELETED', data);           // successful response		
 							})
 
+						}, function (err) {
+							console.error(err);
+						})
+						.catch(function (err) {
+							console.error(err);
 						})
 				}
 				
