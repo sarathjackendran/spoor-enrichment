@@ -19,14 +19,14 @@ AWS.config.update({
 });
 
 var sqs = new AWS.SQS();
-var sqsUrl = process.env.SQS_INGEST;
-var sqsUrl = process.env.SQS_EGEST;
+var sqsUrlIngest = process.env.SQS_INGEST;
+var sqsUrlEgest = process.env.SQS_EGEST;
 
 (function pollQueueForMessages() {
 
 	console.log('polling');
 	sqs.receiveMessage({
-		QueueUrl: sqsUrl,
+		QueueUrl: sqsUrlIngest,
 		WaitTimeSeconds: 20
 	}, function(err, data) {
 			if (err) console.log(err, err.stack); // an error occurred
