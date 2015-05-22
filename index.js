@@ -1,17 +1,11 @@
 
 var AWS			= require('aws-sdk'); 
-var Pusher		= require('pusher');
+
 var UAParser	= require('ua-parser-js');
 var model		= require('./models');
 var sink		= require('./sinks');
 
 require('es6-promise').polyfill();
-
-var pusher = new Pusher({
-	appId: '120775',
-	key: '49081db0b492f38c9f37',
-	secret: '5a3aebf15ae9755a5677'
-});
 
 AWS.config.update({
 	accessKeyId: process.env.accessKey, 
@@ -25,6 +19,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 (function pollQueueForMessages() {
 
 	console.log('polling');
+	
 	sqs.receiveMessage({
 		QueueUrl: sqsUrlIngest,
 		WaitTimeSeconds: 20
@@ -35,7 +30,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 				if (data.Messages && data.Messages.length > 0) {
  
 					var receiptId = data.Messages[0].ReceiptHandle;	
-					console.log(receiptId, data.Messages[0].Body);
+					// console.log(receiptId, data.Messages[0].Body);
 					
 					var header = JSON.parse(data.Messages[0].Body).envelope.headers;
 
@@ -46,12 +41,14 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							model.referrer(header['referer']),
 							model.time(),
 							model.isSubscriber(header['cookie']),
-							model.userAgent(header['user-agent'])
+							model.userAgent(header['user-agent']),
+							model.contentApi(),
+							model.geoLocation(),
+							model.sessionApi()
 						])
 						.then(function (all) {
 				
 							// FIXME destructure
-							console.log(all);
 
 							var country = all[0].country;
 							var referrer = all[1].referrer;
@@ -61,18 +58,8 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 
 							console.log(country, referrer, time, isSubscriber, ua);
 
-							if (Math.random() < 0.02) { 
-								pusher.trigger('test_channel', 'my_event', {
-									"message": { 
-										referer: referrer,
-										ua: ua, 
-										country: country,
-										isSubscriber: isSubscriber
-									}
-								});
-							}
-
-							var message = data.Messages[0];
+							// FIXME attach some AWS Message meta data here
+							var message = data.Messages[0];	// FIXME ideally we never batch process, so perhaps throw error when message.length > 1
 							message.annotations = { 
 										referer: referrer,
 										ua: ua, 
@@ -81,8 +68,9 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 									}
 							
 							sink.sqs(message);
+							sink.pusher(message.annotations);
 
-							// FIXME don't delete message != production
+							// FIXME don't delete message in production
 							
 							sqs.deleteMessage({
 								QueueUrl: sqsUrlIngest,
