@@ -19,7 +19,8 @@ AWS.config.update({
 });
 
 var sqs = new AWS.SQS();
-var sqsUrl = process.env.SQS_URL;
+var sqsUrl = process.env.SQS_INGEST;
+var sqsUrl = process.env.SQS_EGEST;
 
 (function pollQueueForMessages() {
 
