@@ -75,7 +75,7 @@ var sqsUrlEgest = process.env.SQS_EGEST;
 							// FIXME don't delete message != production
 							
 							sqs.deleteMessage({
-								QueueUrl: sqsUrl,
+								QueueUrl: sqsUrlIngest,
 								ReceiptHandle: receiptId 	
 							}, function(err, data) {
 								if (err) console.log(err, err.stack); // an error occurred
