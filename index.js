@@ -3,6 +3,7 @@ var AWS			= require('aws-sdk');
 var Pusher		= require('pusher');
 var UAParser	= require('ua-parser-js');
 var model		= require('./models');
+var sink		= require('./sinks');
 
 require('es6-promise').polyfill();
 
@@ -20,7 +21,6 @@ AWS.config.update({
 
 var sqs = new AWS.SQS();
 var sqsUrlIngest = process.env.SQS_INGEST;
-var sqsUrlEgest = process.env.SQS_EGEST;
 
 (function pollQueueForMessages() {
 
@@ -71,6 +71,16 @@ var sqsUrlEgest = process.env.SQS_EGEST;
 									}
 								});
 							}
+
+							var message = data.Messages[0];
+							message.annotations = { 
+										referer: referrer,
+										ua: ua, 
+										country: country,
+										isSubscriber: isSubscriber
+									}
+							
+							sink.sqs(message);
 
 							// FIXME don't delete message != production
 							
