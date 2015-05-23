@@ -9,11 +9,14 @@ var db = redis.createClient({ port: redisgreen.port, host: redisgreen.hostname, 
 
 module.exports = function (referrer) {
 	
-
 	if (!referrer && !referrer.pathname) return;
 
-	console.log('Writing message to Redis', referrer.pathname);
+	var isArticle = /([\w\d]+)-([\w\d]+)-([\w\d]+)-([\w\d]+)-([\w\d]+)/.exec(referrer.pathname);
 
-	db.incrby(referrer.pathname, 1);
+	if (!isArticle) return;
+
+	console.log('Writing message to Redis', referrer.pathname, isArticle[0]);
+
+	db.incrby(isArticle[0], 1);
 
 };
