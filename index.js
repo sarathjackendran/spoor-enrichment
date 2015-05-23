@@ -66,9 +66,11 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 										country: country,
 										isSubscriber: isSubscriber
 									}
-							
+						
+							// 
 							sink.sqs(message);
 							sink.pusher(message.annotations);
+							sink.redis(referrer);
 
 							// FIXME don't delete message in production
 							

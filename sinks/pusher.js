@@ -15,12 +15,7 @@ module.exports = function (message) {
 	console.log('Writing message to Pusher');
 
 	pusher.trigger('test_channel', 'my_event', {
-		"message": { 
-			referer: referrer,
-			ua: ua, 
-			country: country,
-			isSubscriber: isSubscriber
-		}
+		"message": message 
 	});
 	
 };
