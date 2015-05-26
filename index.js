@@ -59,7 +59,10 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							console.log(country, referrer, time, isSubscriber, ua);
 
 							// FIXME attach some AWS Message meta data here
-							var message = data.Messages[0];	// FIXME ideally we never batch process, so perhaps throw error when message.length > 1
+							var message = data.Messages[0];	// FIXME ideally we
+															// never batch process, so perhaps throw error when
+															// `message.length > 1` 
+							
 							message.annotations = { 
 										referer: referrer,
 										ua: ua, 
@@ -68,6 +71,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 									}
 						
 							// 
+							sink.kinesis(message);
 							sink.sqs(message);
 							sink.pusher(message.annotations);
 							sink.redis(referrer);
