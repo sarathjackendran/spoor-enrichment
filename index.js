@@ -55,7 +55,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							var time = all[2].time;
 							var isSubscriber = all[3].isSubscriber;
 							var ua = all[4].userAgent;
-							var meta = all[8].sqsMessageMetadata;
+							var meta = all[8];
 
 							Message.annotations = { 
 										referer: referrer,
