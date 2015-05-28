@@ -4,7 +4,7 @@ module.exports = function (message) {
 		resolve({
 			MD5OfBody: message.MD5OfBody,
 			ReceiptHandle: message.ReceiptHandle,
-			MessageId: data.MessageId
+			MessageId: message.MessageId
 		});
 	});
 }

@@ -31,7 +31,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 
 					var Message = data.Messages[0];
 				
-					var header = JSON.parse(data.Messages[0].Body).envelope.headers;
+					var header = JSON.parse(Message.Body).envelope.headers;
 
 					// Enrichments, each modelled as a promise that resolves with the decoration
 					Promise
@@ -44,7 +44,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							model.contentApi(),
 							model.geoLocation(),
 							model.sessionApi(),
-							model.sqsMessageMetadata(Message)
+							model.sqsMessageMetadata(Message) // FIXME rename: ingest meta
 						])
 						.then(function (all) {
 				
@@ -57,12 +57,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							var ua = all[4].userAgent;
 							var meta = all[8].sqsMessageMetadata;
 
-							// FIXME attach some AWS Message meta data here
-							var message = data.Messages[0];	// FIXME ideally we
-															// never batch process, so perhaps throw error when
-															// `message.length > 1` 
-							
-							message.annotations = { 
+							Message.annotations = { 
 										referer: referrer,
 										ua: ua, 
 										country: country,
@@ -71,13 +66,13 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 									}
 						
 							// 
-							sink.kinesis(message);
-							sink.sqs(message);
+							sink.kinesis(Message);
+							sink.sqs(Message);
 
-							console.log(message);
+							console.log(Message);
 
 							// FIXME - move these two sinks to the egest consumer
-							sink.pusher(message.annotations);
+							sink.pusher(Message.annotations);
 							sink.redis(referrer);
 
 							// FIXME don't delete message in production
