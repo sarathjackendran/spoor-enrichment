@@ -62,7 +62,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 										ua: ua, 
 										country: country,
 										isSubscriber: isSubscriber,
-										message: meta
+										ingestSQS: meta
 									}
 						
 							// 
