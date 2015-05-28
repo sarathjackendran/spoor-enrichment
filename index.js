@@ -29,7 +29,8 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 
 				if (data.Messages && data.Messages.length > 0) {
 
-					console.log(data.Messages);
+					console.log('Messages', data.Messages);
+					console.log('data', data);
 
 					var receiptId = data.Messages[0].ReceiptHandle;	
 					// console.log(receiptId, data.Messages[0].Body);
