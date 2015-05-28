@@ -69,7 +69,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							sink.kinesis(Message);
 							sink.sqs(Message);
 
-							console.log(Message);
+							console.log('Message', JSON.stringify(Message)); // TODO - splice this on to the original message
 
 							// FIXME - move these two sinks to the egest consumer
 							sink.pusher(Message.annotations);
