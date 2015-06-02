@@ -43,26 +43,26 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							model.userAgent(header['user-agent']),
 							model.contentApi(),
 							model.geoLocation(),
-							model.sessionApi(),
+							model.sessionApi(header['cookie']),
 							model.sqsMessageMetadata(Message) // FIXME rename: ingest meta
 						])
 						.then(function (all) {
-				
-							// FIXME destructure
 
 							var country = all[0].country;
 							var referrer = all[1].referrer;
 							var time = all[2].time;
 							var isSubscriber = all[3].isSubscriber;
 							var ua = all[4].userAgent;
+							var session = all[7];
 							var meta = all[8];
 
 							Message.annotations = { 
 										referer: referrer,
-										ua: ua, 
+										ua: ua,
 										country: country,
 										isSubscriber: isSubscriber,
-										ingestSQS: meta
+										ingestSQS: meta,
+										session: session
 									}
 						
 							// 
