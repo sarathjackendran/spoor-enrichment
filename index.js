@@ -28,11 +28,10 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 			else {
 
 				if (data.Messages && data.Messages.length > 0) {
- 
-					var receiptId = data.Messages[0].ReceiptHandle;	
-					// console.log(receiptId, data.Messages[0].Body);
-					
-					var header = JSON.parse(data.Messages[0].Body).envelope.headers;
+
+					var Message = data.Messages[0];
+				
+					var header = JSON.parse(Message.Body).envelope.headers;
 
 					// Enrichments, each modelled as a promise that resolves with the decoration
 					Promise
@@ -44,7 +43,8 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							model.userAgent(header['user-agent']),
 							model.contentApi(),
 							model.geoLocation(),
-							model.sessionApi()
+							model.sessionApi(),
+							model.sqsMessageMetadata(Message) // FIXME rename: ingest meta
 						])
 						.then(function (all) {
 				
@@ -55,32 +55,33 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							var time = all[2].time;
 							var isSubscriber = all[3].isSubscriber;
 							var ua = all[4].userAgent;
+							var meta = all[8];
 
-							console.log(country, referrer, time, isSubscriber, ua);
-
-							// FIXME attach some AWS Message meta data here
-							var message = data.Messages[0];	// FIXME ideally we
-															// never batch process, so perhaps throw error when
-															// `message.length > 1` 
-							
-							message.annotations = { 
+							Message.annotations = { 
 										referer: referrer,
 										ua: ua, 
 										country: country,
-										isSubscriber: isSubscriber
+										isSubscriber: isSubscriber,
+										ingestSQS: meta
 									}
 						
 							// 
-							sink.kinesis(message);
-							sink.sqs(message);
-							sink.pusher(message.annotations);
+							sink.kinesis(Message);
+							sink.sqs(Message);
+
+							Message.Body = JSON.parse(Message.Body);
+
+							console.log('Message', JSON.stringify(Message)); // TODO - splice this on to the original message
+
+							// FIXME - move these two sinks to the egest consumer
+							sink.pusher(Message.annotations);
 							sink.redis(referrer);
 
 							// FIXME don't delete message in production
 							
 							sqs.deleteMessage({
 								QueueUrl: sqsUrlIngest,
-								ReceiptHandle: receiptId 	
+								ReceiptHandle: meta.ReceiptHandle
 							}, function(err, data) {
 								if (err) console.log(err, err.stack); // an error occurred
 								else     console.log('DELETED', data);           // successful response		
