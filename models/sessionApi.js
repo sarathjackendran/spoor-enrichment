@@ -1,6 +1,11 @@
-module.exports = function () {
+module.exports = function (cookie) {
 	return new Promise(function(resolve, reject) {
-		// if message contains a user.session then validate it
-		resolve({});
+
+		if (!cookie) resolve(undefined);
+
+		var match = cookie.match(/FTSESSION=([^;]+)/i);
+		session = (match) ? match[1] : undefined;
+
+		resolve(session);
 	});
 }
