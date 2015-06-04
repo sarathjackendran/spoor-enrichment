@@ -41,7 +41,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							model.time(),
 							model.isSubscriber(header['cookie']),
 							model.userAgent(header['user-agent']),
-							model.contentApi(),
+							model.contentApi(header['referer']),
 							model.geoLocation(),
 							model.sessionApi(header['cookie']),
 							model.sqsMessageMetadata(Message) // FIXME rename: ingest meta
@@ -73,10 +73,6 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							console.log('Message', JSON.stringify(Message)); // TODO - splice this on to the original message
 							
 							sink.sqs(Message);
-
-							// FIXME - move these two sinks to the egest consumer
-							//sink.pusher(Message.annotations);
-							//sink.redis(referrer);
 
 							// FIXME don't delete message in production
 						
