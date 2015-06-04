@@ -78,8 +78,6 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 
 							// FIXME don't delete message in production
 						
-							return;
-
 							sqs.deleteMessage({
 								QueueUrl: sqsUrlIngest,
 								ReceiptHandle: meta.ReceiptHandle
