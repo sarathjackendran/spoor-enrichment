@@ -63,19 +63,18 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 
 					Message.Body = JSON.parse(Message.Body);
 
-					console.log('Message', JSON.stringify(Message)); // TODO - splice this on to the original message
+					console.log('deleting', sqsUrlIngest, meta.ReceiptHandle);
+					console.log('**** Message', JSON.stringify(Message)); // TODO - splice this on to the original message
 
 					sink.sqs(Message);
 
 					// FIXME don't delete message in production
 
-					return;
-
 					sqs.deleteMessage({
 						QueueUrl: sqsUrlIngest,
 						ReceiptHandle: meta.ReceiptHandle
 					}, function (err, data) {
-						if (err) console.log(err, err.stack); // an error occurred
+						if (err) console.log('ERROR', err, err.stack); // an error occurred
 						else console.log('DELETED', data); // successful response		
 					});
 				}, function (err) {
