@@ -12,7 +12,7 @@ var sqsUrlEgest = process.env.SQS_EGEST;
 
 module.exports = function (message) {
 	
-	console.log('Writing message to SQS');
+	console.log('Writing message to SQS', message);
 
 	sqs.sendMessage({
 		QueueUrl: sqsUrlEgest, MessageBody: message

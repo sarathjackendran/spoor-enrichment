@@ -67,7 +67,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 						
 							// 
 							sink.kinesis(Message);
-							sink.sqs(JSON.stringify(Message));
+							sink.sqs(Message);
 
 							Message.Body = JSON.parse(Message.Body);
 
@@ -78,7 +78,9 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							sink.redis(referrer);
 
 							// FIXME don't delete message in production
-							
+						
+							return;
+
 							sqs.deleteMessage({
 								QueueUrl: sqsUrlIngest,
 								ReceiptHandle: meta.ReceiptHandle
