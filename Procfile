@@ -1,1 +1,1 @@
-sqs: node index.js
+sqs: node dist/consumer.js

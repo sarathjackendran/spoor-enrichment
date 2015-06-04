@@ -46,13 +46,14 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							model.sessionApi(header['cookie']),
 							model.sqsMessageMetadata(Message) // FIXME rename: ingest meta
 						])
-						.then(function (all) {
+						.then(function (all) {		// FIXME time this promise.
 
 							var country = all[0].country;
 							var referrer = all[1].referrer;
 							var time = all[2].time;
 							var isSubscriber = all[3].isSubscriber;
 							var ua = all[4].userAgent;
+							var content = all[5];
 							var session = all[7];
 							var meta = all[8];
 
@@ -62,7 +63,8 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 										country: country,
 										isSubscriber: isSubscriber,
 										ingestSQS: meta,
-										session: session
+										session: session,
+										content: content
 									}
 						
 							// 
