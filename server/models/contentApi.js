@@ -39,6 +39,7 @@ module.exports = function (referrer) {
 				})
 			})
 			.catch((err) => {
+				console.log('models/content-api', 'error', err);
 				reject(err);
 			})
 		
