@@ -17,7 +17,7 @@ module.exports = function (referrer) {
 		console.log('models/content-api', 'fetching', r.pathname, !!article);
 		
 		if (!article) resolve({});
-		if (Math.random() > 0.2) resolve({});	// FIXME allows us to scale up
+		if (Math.random() > 0.5) resolve({});	// FIXME allows us to scale up
 
 		// FIXME - extract uuid from r.pathname
 		console.log('models/content-api', 'fetching n', article[0]);
