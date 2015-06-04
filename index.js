@@ -75,8 +75,8 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							sink.sqs(Message);
 
 							// FIXME - move these two sinks to the egest consumer
-							sink.pusher(Message.annotations);
-							sink.redis(referrer);
+							//sink.pusher(Message.annotations);
+							//sink.redis(referrer);
 
 							// FIXME don't delete message in production
 						
