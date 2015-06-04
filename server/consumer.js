@@ -77,13 +77,14 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							sink.sqs(Message);
 
 							// FIXME don't delete message in production
-
+						
+							console.log('deleting', sqsUrlIngest, meta.ReceiptHandle);
 							sqs.deleteMessage({
 								QueueUrl: sqsUrlIngest,
 								ReceiptHandle: meta.ReceiptHandle
 							}, function(err, data) {
-								if (err) console.log('ERROR', err, err.stack); // an error occurred
-								else     console.log('DELETED', data);           // successful response		
+								if (err) console.log('ERROR', err, err.stack);		// an error occurred
+								else     console.log('DELETED', data);				// successful response		
 							})
 
 						}, function (err) {
