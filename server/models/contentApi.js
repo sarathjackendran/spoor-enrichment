@@ -27,10 +27,11 @@ module.exports = function (referrer) {
 				headers: { 'x-api-key': process.env.CAPI_API_KEY }
 			})
 			.then((res) => {
-				console.log('models/content-api', res.status);
+				console.log('models/content-api', article[0], res.status);
 				return res.json();
 			})
 			.then((content) => {
+				console.log('models/content-api', article[0], content.title);
 				resolve({
 					uuid: article[0],
 					title: content.title,
@@ -39,7 +40,7 @@ module.exports = function (referrer) {
 				})
 			})
 			.catch((err) => {
-				console.log('models/content-api', 'error', err);
+				console.log('models/content-api', article[0], 'error', err);
 				reject(err);
 			})
 		
