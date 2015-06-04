@@ -71,14 +71,14 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							sink.kinesis(Message);
 
 							Message.Body = JSON.parse(Message.Body);
-							
+						
+							console.log('deleting', sqsUrlIngest, meta.ReceiptHandle);
 							console.log('Message', JSON.stringify(Message)); // TODO - splice this on to the original message
 							
 							sink.sqs(Message);
 
 							// FIXME don't delete message in production
 						
-							console.log('deleting', sqsUrlIngest, meta.ReceiptHandle);
 							sqs.deleteMessage({
 								QueueUrl: sqsUrlIngest,
 								ReceiptHandle: meta.ReceiptHandle
