@@ -73,7 +73,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							Message.Body = JSON.parse(Message.Body);
 						
 							console.log('deleting', sqsUrlIngest, meta.ReceiptHandle);
-							console.log('Message', JSON.stringify(Message)); // TODO - splice this on to the original message
+							console.log('**** Message', JSON.stringify(Message)); // TODO - splice this on to the original message
 							
 							sink.sqs(Message);
 
