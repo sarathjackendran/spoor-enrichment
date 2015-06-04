@@ -15,7 +15,7 @@ module.exports = function (message) {
 	console.log('Writing message to SQS');
 
 	sqs.sendMessage({
-		QueueUrl: sqsUrlEgest, MessageBody: message.toString()
+		QueueUrl: sqsUrlEgest, MessageBody: message
 	}, function(err, data) {
 		console.log(err, data);
 	});
