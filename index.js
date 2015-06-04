@@ -67,7 +67,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 						
 							// 
 							sink.kinesis(Message);
-							sink.sqs(Message);
+							sink.sqs(JSON.stringify(Message));
 
 							Message.Body = JSON.parse(Message.Body);
 
