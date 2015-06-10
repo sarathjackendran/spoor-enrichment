@@ -19,6 +19,6 @@ module.exports = function (message) {
 	kinesis.putRecord({
 		StreamName: 'spoor-egest', PartitionKey: 'event', Data: JSON.stringify(message)
 	}, function (err, data) {
-		console.log(err, data);
+		console.log('ERROR', err, data);
 	});
 };
