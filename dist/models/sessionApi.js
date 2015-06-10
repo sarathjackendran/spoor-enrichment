@@ -35,7 +35,7 @@ module.exports = function (cookie) {
 			statsd.increment('ingest.consumer.models.session-api.fetch.response.' + res.status, 1);
 			return res.json();
 		}).then(function (content) {
-			console.log('models/session-api', session);
+			console.log('models/session-api', JSON.stringify(content));
 			resolve(session);
 		})['catch'](function (err) {
 			console.log('models/session-api', 'error', err);
