@@ -6,7 +6,7 @@ var util = require('util');
 var prefix = process.env.HOSTEDGRAPHITE_APIKEY;
 var platform = process.env.DYNO ? 'heroku' : 'localhost';
 var instance = platform === 'heroku' ? process.env.DYNO.replace('.', '_') : '_';
-var app = 'spoor-api';
+var app = 'spoor-enrichment';
 
 var key = util.format('%s.%s.%s.%s.', prefix, platform, app, instance);
 

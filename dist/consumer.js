@@ -86,7 +86,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 						ReceiptHandle: meta.ReceiptHandle
 					}, function (err, data) {
 						if (err) {
-							console.log('ERROR', err, err.stack); // an error occurred
+							console.log('ERROR-1', err, err.stack); // an error occurred
 							statsd.increment('ingest.consumer.deleteMessage.error', 1);
 						} else {
 							console.log('DELETED', data); // successful response		
@@ -94,10 +94,10 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 						}
 					});
 				}, function (err) {
-					console.error('ERROR', err);
+					console.error('ERROR-2', err);
 					statsd.increment('ingest.consumer.receiveMessage.promise.rejected', 1);
 				})['catch'](function (err) {
-					console.error('ERROR', err);
+					console.error('ERROR-3', err);
 					statsd.increment('ingest.consumer.receiveMessage.promise.rejected', 1);
 				});
 			}
