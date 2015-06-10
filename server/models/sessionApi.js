@@ -36,7 +36,7 @@ module.exports = function (cookie) {
 				return res.json();
 			})
 			.then((content) => {
-				console.log('models/session-api', session);
+				console.log('models/session-api', JSON.stringify(content));
 				resolve(session) // FIXME - should return the API response in full
 			})
 			.catch((err) => {
