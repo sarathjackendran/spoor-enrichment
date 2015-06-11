@@ -49,7 +49,6 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							model.country(header),
 							model.referrer(header['referer']),
 							model.time(),
-							model.isSubscriber(header['cookie']),
 							model.userAgent(header['user-agent']),
 							model.contentApi(header['referer']),
 							model.geoLocation(),
@@ -63,19 +62,18 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							var country = all[0].country;
 							var referrer = all[1].referrer;
 							var time = all[2].time;
-							var isSubscriber = all[3].isSubscriber;
-							var ua = all[4].userAgent;
-							var content = all[5];
-							var session = all[7];
-							var meta = all[8];
+							var ua = all[3].userAgent;
+							var content = all[4];
+							var session = all[6].session;
+							var meta = all[7];
 
 							Message.annotations = { 
 										referer: referrer,
 										ua: ua,
 										country: country,
-										isSubscriber: isSubscriber,
 										ingestSQS: meta,
 										session: session,
+										membership: all[6],
 										content: content
 									}
 						
