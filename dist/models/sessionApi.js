@@ -23,7 +23,8 @@ module.exports = function (cookie) {
 			return;
 		};
 
-		if (Math.random() > 0.2) {
+		if (false) {
+			// FIXME allows us to thottle the requests
 			statsd.increment('ingest.consumer.models.session-api.throttle', 1);
 			resolve(user);
 			return;
@@ -35,11 +36,11 @@ module.exports = function (cookie) {
 			timeout: 2000,
 			headers: { 'ft_api_key': process.env.SESSION_API_KEY }
 		}).then(function (res) {
-			console.log('models/session-api', res.status);
+			console.log('models/session-api', 'status', res.status);
 			statsd.increment('ingest.consumer.models.session-api.fetch.response.' + res.status, 1);
 			return res.json();
 		}).then(function (content) {
-			console.log('models/session-api', JSON.stringify(content));
+			console.log('models/session-api', 'response', JSON.stringify(content));
 			user.uuid = content.uuid;
 			resolve(user);
 		})['catch'](function (err) {
