@@ -22,7 +22,7 @@ module.exports = function (cookie) {
 			return;
 		};
 
-		if (Math.random() > 0.2) {
+		if (Math.random() > 0.6) {
 			statsd.increment('ingest.consumer.models.session-api.throttle', 1);
 			resolve(user);
 			return;
