@@ -41,7 +41,7 @@ module.exports = function (cookie) {
 			})
 			.then((content) => {
 				console.log('models/session-api', 'response', JSON.stringify(content));
-				user.uuid = content.uuid;
+				user.api = content;
 				resolve(user);
 			})
 			.catch((err) => {
