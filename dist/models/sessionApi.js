@@ -6,22 +6,26 @@ var statsd = require('../lib/statsd');
 module.exports = function (cookie) {
 	return new Promise(function (resolve, reject) {
 
-		if (!cookie) resolve(undefined);
+		if (!cookie) resolve({});
 
 		var match = cookie.match(/FTSESSION=([^;]+)/i);
 		var session = match ? match[1] : undefined;
+
+		var user = {
+			session: session
+		};
 
 		console.log('models/session-api', 'validating', session);
 
 		if (!session) {
 			statsd.increment('ingest.consumer.models.session-api.no-session', 1);
-			resolve(session);
+			resolve(user);
 			return;
 		};
 
 		if (Math.random() > 0.2) {
 			statsd.increment('ingest.consumer.models.session-api.throttle', 1);
-			resolve(session);
+			resolve(user);
 			return;
 		};
 
@@ -36,12 +40,12 @@ module.exports = function (cookie) {
 			return res.json();
 		}).then(function (content) {
 			console.log('models/session-api', JSON.stringify(content));
-			resolve(session);
+			user.uuid = content.uuid;
+			resolve(user);
 		})['catch'](function (err) {
 			console.log('models/session-api', 'error', err);
 			statsd.increment('ingest.consumer.models.session-api.error', 1);
-			resolve(session); // FIXME - could/should be a reject
+			resolve(user); // FIXME - could/should be a reject
 		});
 	});
 };
-// FIXME - should return the API response in full
