@@ -67,7 +67,6 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							var ua = all[4].userAgent;
 							var content = all[5];
 							var session = all[7].session;
-							var uuid	= all[7].uuid;
 							var meta = all[8];
 
 							Message.annotations = { 
@@ -77,7 +76,7 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 										isSubscriber: isSubscriber,
 										ingestSQS: meta,
 										session: session,
-										uuid: uuid,
+										membership: all[7],
 										content: content
 									}
 						
