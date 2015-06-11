@@ -22,7 +22,7 @@ module.exports = function (cookie) {
 			return;
 		};
 
-		if (Math.random() > 0.6) {
+		if (Math.random() > 1) { // FIXME allows us to thottle the requests
 			statsd.increment('ingest.consumer.models.session-api.throttle', 1);
 			resolve(user);
 			return;
