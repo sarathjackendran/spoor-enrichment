@@ -10,5 +10,5 @@ run: compile
 test:
 	echo "TODO"
 
-deploy:
+deploy: compile
 	@haikro build deploy --app spoor-sqs-consumer --heroku-token=`heroku auth:token` --commit `git rev-parse HEAD`
