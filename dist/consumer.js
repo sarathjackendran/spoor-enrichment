@@ -2,9 +2,9 @@
 
 var AWS = require('aws-sdk');
 
-var UAParser = require('ua-parser-js');
 var model = require('./models');
 var sink = require('./sinks');
+var statsd = require('./lib/statsd');
 
 require('es6-promise').polyfill();
 
@@ -20,13 +20,22 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 (function pollQueueForMessages() {
 
 	console.log('polling');
+	statsd.increment('ingest.consumer.polling', 1);
 
 	sqs.receiveMessage({
 		QueueUrl: sqsUrlIngest,
 		WaitTimeSeconds: 20
 	}, function (err, data) {
-		if (err) console.log(err, err.stack); // an error occurred
-		else {
+		if (err) {
+			console.log(err);
+			statsd.increment('ingest.consumer.receiveMessage.error', 1);
+		} else {
+
+			statsd.increment('ingest.consumer.receiveMessage.success', 1);
+
+			if (data.Messages && data.Messages.length > 1) {
+				statsd.increment('ingest.consumer.receiveMessage.exceeded_length_expectation', 1);
+			}
 
 			if (data.Messages && data.Messages.length > 0) {
 
@@ -38,6 +47,8 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 				Promise.all([model.country(header), model.referrer(header['referer']), model.time(), model.isSubscriber(header['cookie']), model.userAgent(header['user-agent']), model.contentApi(header['referer']), model.geoLocation(), model.sessionApi(header['cookie']), model.sqsMessageMetadata(Message) // FIXME rename: ingest meta
 				]).then(function (all) {
 					// FIXME time this promise.
+
+					statsd.increment('ingest.consumer.receiveMessage.promise.resolved', 1);
 
 					var country = all[0].country;
 					var referrer = all[1].referrer;
@@ -74,13 +85,20 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 						QueueUrl: sqsUrlIngest,
 						ReceiptHandle: meta.ReceiptHandle
 					}, function (err, data) {
-						if (err) console.log('ERROR', err, err.stack); // an error occurred
-						else console.log('DELETED', data); // successful response		
+						if (err) {
+							console.log('ERROR-1', err, err.stack); // an error occurred
+							statsd.increment('ingest.consumer.deleteMessage.error', 1);
+						} else {
+							console.log('DELETED', data); // successful response		
+							statsd.increment('ingest.consumer.deleteMessage.success', 1);
+						}
 					});
 				}, function (err) {
-					console.error('ERROR', err);
+					console.error('ERROR-2', err);
+					statsd.increment('ingest.consumer.receiveMessage.promise.rejected', 1);
 				})['catch'](function (err) {
-					console.error('ERROR', err);
+					console.error('ERROR-3', err);
+					statsd.increment('ingest.consumer.receiveMessage.promise.rejected', 1);
 				});
 			}
 
