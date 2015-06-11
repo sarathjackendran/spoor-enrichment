@@ -1,5 +1,3 @@
-HEROKU_AUTH_TOKEN := `heroku auth:token`
-
 compile:
 	gulp compile
 
@@ -8,3 +6,9 @@ run: compile
 	 export secretAccessKey=`cat ~/.aws-secret.spoor`; \
 	 export SQS_URL=`cat ~/.aws-sqs.spoor`; \
 	 node dist/consumer.js
+
+test:
+	echo "TODO"
+
+deploy: compile
+	@haikro build deploy --app spoor-sqs-consumer --heroku-token=`heroku auth:token` --commit `git rev-parse HEAD`
