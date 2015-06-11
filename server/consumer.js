@@ -41,18 +41,19 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 							model.time(),
 							model.isSubscriber(header['cookie']),
 							model.userAgent(header['user-agent']),
-							model.contentApi(),
+							model.contentApi(header['referer']),
 							model.geoLocation(),
 							model.sessionApi(header['cookie']),
 							model.sqsMessageMetadata(Message) // FIXME rename: ingest meta
 						])
-						.then(function (all) {
+						.then(function (all) {		// FIXME time this promise.
 
 							var country = all[0].country;
 							var referrer = all[1].referrer;
 							var time = all[2].time;
 							var isSubscriber = all[3].isSubscriber;
 							var ua = all[4].userAgent;
+							var content = all[5];
 							var session = all[7];
 							var meta = all[8];
 
@@ -62,32 +63,28 @@ var sqsUrlIngest = process.env.SQS_INGEST;
 										country: country,
 										isSubscriber: isSubscriber,
 										ingestSQS: meta,
-										session: session
+										session: session,
+										content: content
 									}
 						
 							// 
 							sink.kinesis(Message);
 
 							Message.Body = JSON.parse(Message.Body);
-							
-							console.log('Message', JSON.stringify(Message)); // TODO - splice this on to the original message
+						
+							console.log('deleting', sqsUrlIngest, meta.ReceiptHandle);
+							console.log('**** Message', JSON.stringify(Message)); // TODO - splice this on to the original message
 							
 							sink.sqs(Message);
 
-							// FIXME - move these two sinks to the egest consumer
-							//sink.pusher(Message.annotations);
-							//sink.redis(referrer);
-
 							// FIXME don't delete message in production
 						
-							return;
-
 							sqs.deleteMessage({
 								QueueUrl: sqsUrlIngest,
 								ReceiptHandle: meta.ReceiptHandle
 							}, function(err, data) {
-								if (err) console.log(err, err.stack); // an error occurred
-								else     console.log('DELETED', data);           // successful response		
+								if (err) console.log('ERROR', err, err.stack);		// an error occurred
+								else     console.log('DELETED', data);				// successful response		
 							})
 
 						}, function (err) {

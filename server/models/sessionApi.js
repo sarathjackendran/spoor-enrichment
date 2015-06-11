@@ -4,7 +4,7 @@ module.exports = function (cookie) {
 		if (!cookie) resolve(undefined);
 
 		var match = cookie.match(/FTSESSION=([^;]+)/i);
-		session = (match) ? match[1] : undefined;
+		var session = (match) ? match[1] : undefined;
 
 		resolve(session);
 	});
