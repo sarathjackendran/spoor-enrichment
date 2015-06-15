@@ -5,7 +5,7 @@ run: compile
 	@export accessKey=`cat ~/.aws-access.spoor`; \
 	 export secretAccessKey=`cat ~/.aws-secret.spoor`; \
 	 export SQS_URL=`cat ~/.aws-sqs.spoor`; \
-	 node dist/consumer.js
+	 node dist/rx.js
 
 test: compile
 	@rm -Rf dist-tests/*
