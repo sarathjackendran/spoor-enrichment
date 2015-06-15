@@ -7,8 +7,9 @@ run: compile
 	 export SQS_URL=`cat ~/.aws-sqs.spoor`; \
 	 node dist/consumer.js
 
-test:
-	echo "TODO"
+test: compile
+	@rm -Rf dist-tests/*
+	@gulp compile-tests; mocha -R spec --recursive dist-tests/server
 
 deploy: compile
 	@haikro build deploy --app spoor-sqs-consumer --heroku-token=`heroku auth:token` --commit `git rev-parse HEAD`

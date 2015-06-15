@@ -6,3 +6,9 @@ gulp.task("compile", function () {
     .pipe(babel())
     .pipe(gulp.dest("dist"));
 });
+
+gulp.task("compile-tests", function () {
+  return gulp.src('tests/**/*.js')
+    .pipe(babel())
+    .pipe(gulp.dest("dist-tests"));
+});
