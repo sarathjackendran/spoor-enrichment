@@ -5,7 +5,7 @@
 var expect	= require('chai').expect;
 var sinon	= require('sinon');
 
-var time	= require('../../../dist/transforms/time');
+var time	= require('../../../dist/transforms').time;
 
 describe('Time', function () {
 	

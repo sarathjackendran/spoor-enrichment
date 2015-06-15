@@ -5,7 +5,7 @@
 var expect	= require('chai').expect;
 var sinon	= require('sinon');
 
-var toJson	= require('../../../dist/transforms/toJson');
+var toJson	= require('../../../dist/transforms').toJson;
 
 describe('to JSON', function () {
 	

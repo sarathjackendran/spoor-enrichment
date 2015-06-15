@@ -1,1 +1,1 @@
-module.exports.source		= require('./source');
+module.exports.isValidSource	= require('./isValidSource');
