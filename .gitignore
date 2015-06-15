@@ -1,5 +1,6 @@
 .vim.custom
 node_modules
 dist
+dist-tests
 .haikro-cache
 node-*
