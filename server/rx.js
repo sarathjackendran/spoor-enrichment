@@ -61,7 +61,12 @@ var subscribe = stream => {
 		.map(transforms.toJson)
 		.map(transforms.ingestQueueMetadata)
 		//.filter(filters.isValidSource)		// FIXME
+		
+		// in memory operations 
 		.map(transforms.time)
+		.map(transforms.geo)
+		
+		// session
 		.flatMap(data => {
 			return Promise.all([
 				Promise.resolve(data),
@@ -74,6 +79,8 @@ var subscribe = stream => {
 			event.egest.user.uuid = session.uuid;
 			return event;
 		})
+	
+		// complete
 		.subscribe(
 			success => {
 				console.log('Next', JSON.stringify(success))
