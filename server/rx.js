@@ -1,5 +1,6 @@
 // `npm install rx randomstring es6-promise gulp babel gulp-babel` ; make run 
 
+var AWS				= require('aws-sdk'); 
 var Rx				= require('rx');
 var randomstring	= require("randomstring");
 var transforms		= require('./transforms');
@@ -9,36 +10,73 @@ require('es6-promise').polyfill();
 
 // -------- Simulated SQS stream
 
-var sqsStream = new Rx.Subject();
-var c = 0;
-setInterval(() => {
+AWS.config.update({
+	accessKeyId: process.env.accessKey, 
+	secretAccessKey: process.env.secretAccessKey, 
+	"region": "eu-west-1"
+});
+
+var sqs = new AWS.SQS();
+var sqsUrlIngest = process.env.SQS_INGEST;
+var subject = new Rx.Subject();
 	
-	if (c > 99) return;
+var sqsStream = function () {
+	
+	(function pollQueueForMessages() {
+		console.log('polling');
+		sqs.receiveMessage({
+			QueueUrl: sqsUrlIngest,
+			WaitTimeSeconds: 20
+		}, (err, data) => {
+		
+				if (err) {
+					console.log(err);
+					return;
+				}
+			
+				// The raw ingest feed is transform, copied etc. over to the egest
+				var message = {
+					ingest: data.Messages[0],
+					egest: { 
+						user: { }
+					}
+				}
 
-	console.log('SQS generated an event', c);
-	sqsStream.onNext(JSON.stringify({
-		session: randomstring.generate(),
-		c: c++,
-		event: {
-			source: 123,
-			action: 123
-		}
-	}));
+				subject.onNext(message)
+				pollQueueForMessages();
+		})
+	})();
 
-}, 100);
-
+	return subject;
+}
 
 // -------- Enrichment pipeline 
 
 var subscribe = stream => {
 
 	var enrichmentStream = stream
+		.do(function (d) {
+			//console.log(d);
+		})
 		.map(transforms.toJson)
-		.filter(filters.isValidSource)
+		.map(transforms.ingestQueueMetadata)
+		//.filter(filters.isValidSource)		// FIXME
 		.map(transforms.time)
+		.flatMap(data => {
+			return Promise.all([
+				Promise.resolve(data),
+				transforms.sessionApi(data)	
+			])
+		})
+		.map(data => {
+			var [event, session] = data;
+			event.egest.user.session = session.token;
+			event.egest.user.uuid = session.uuid;
+			return event;
+		})
 		.subscribe(
 			success => {
-				console.log('Next', JSON.stringify(success))	// Eg. push to kinesis
+				console.log('Next', JSON.stringify(success))
 			},
 			err => {
 				console.log('Error: ' + err);
@@ -48,5 +86,6 @@ var subscribe = stream => {
 }
 
 // subscribe the stream 
-subscribe(sqsStream);
+subscribe(sqsStream());
 
+sqsStream()
