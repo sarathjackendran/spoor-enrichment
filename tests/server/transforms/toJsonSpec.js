@@ -15,8 +15,14 @@ var message = {
 
 describe('to JSON', function () {
 	
-	it('to JSON', done => {
+	it('convert the incoming Spoor message from a string to JSON', done => {
 		expect(toJson(message).ingest.BodyAsJson.envelope.url.pathname).to.equal('/');
+		done();
+	});
+	
+	it('convert the incoming Spoor message body from a buffer to JSON', done => {
+		console.log(toJson(message).ingest.message);
+		expect(toJson(message).ingest.message.videoid).to.equal(4283366118001);
 		done();
 	});
 	
