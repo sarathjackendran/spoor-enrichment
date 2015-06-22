@@ -9,7 +9,7 @@ run: compile
 
 test: compile
 	@rm -Rf dist-tests/*
-	@gulp compile-tests; mocha -R spec --recursive dist-tests/server
+	@export SESSION_API_KEY=123; gulp compile-tests; mocha -R spec --recursive dist-tests/server
 
 deploy: compile
 	@haikro build deploy --app spoor-sqs-consumer --heroku-token=`heroku auth:token` --commit `git rev-parse HEAD`
