@@ -1,15 +1,16 @@
 
 module.exports = function (event) {
 	
-	var headers = event.ingest.BodyAsJson.envelope.headers;
+	var headers = event.headers();
 
-	event.egest.user.geo = {
-		country: headers['x-geoip-country'], 
+	var geo = {
+		country: headers['x-geoip-country'],
 		continent: headers['x-geoip-continent'], 
-		countryName: headers['x-geoip-country'], 
+		countryName: headers['x-geoip-country-name'], 
 		lat: headers['x-geoip-lat'], 
 		lon: headers['x-geoip-lon']
 	}	
 
+	event.annotate('geo', geo);
 	return event;
 }

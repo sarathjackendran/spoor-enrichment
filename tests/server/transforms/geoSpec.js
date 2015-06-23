@@ -5,25 +5,21 @@ var expect	= require('chai').expect;
 var sinon	= require('sinon');
 var fs		= require('fs');
 
-var geo		= require('../../../dist/transforms').geo;
-var e = {
-	ingest: JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' })),
-	egest: {}
-}
+var geo         = require('../../../dist/transforms').geo;
+var EventModel	= require('../../../dist/models').EventModel;
 
-e.ingest.BodyAsJson = JSON.parse(e.ingest.Body);
-//console.log(e.ingest.Body)
+var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
+var e, g;
 
 describe('Geo', function () {
 
 	beforeEach(() => {
-		e.egest = {
-			user: { }
-		};
-	})
+		e = new EventModel(rawSqs);
+		g = geo(e);
+	});
 
 	it('Determine country from the HTTP headers', done => {
-		expect(geo(e).egest.user.geo.country).to.equal('GB');
+		expect(e.annotations().geo.country).to.equal('GB');
 		done()
 	});
 
