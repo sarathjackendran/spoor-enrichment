@@ -11,8 +11,15 @@ var EventModel = function (message) {
 EventModel.prototype._sqsToJson = function () {
 	try {
 		this.ingest._asJson = JSON.parse(this.ingest._raw.Body);
-		var message = new Buffer(this.ingest._asJson.message).toString('utf8');
-		this.ingest._body = JSON.parse(message);
+		var message = new Buffer(this.ingest._asJson.message);
+	
+		// Avoid 'unexpected input' error when trying to convert an empty buffer to a string
+		if (message.length > 0) {
+			this.ingest._body = JSON.parse(message.toString('utf8'));
+		} else {
+			this.ingest._body = {};
+		}
+
 		this.ingest._bodyFlattened = flatten(this.ingest._body);
 		this.ingest._headers = this.ingest._asJson.envelope.headers || {}; 
 	} catch (err) {

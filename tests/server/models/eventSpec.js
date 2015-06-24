@@ -7,6 +7,7 @@ var fs			= require('fs');
 var EventModel	= require('../../../dist/models').EventModel;
 
 var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
+var rawSqs__no_message = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--no-message', { encoding: 'utf8' }));
 
 describe('Event', () => {
 
@@ -63,6 +64,13 @@ describe('Event', () => {
 			var e = new EventModel(rawSqs);
 			expect(e.body('videoid')).to.equal(4283366118001);
 			expect(e.body('position').a).to.equal(315.374);
+			done();
+		});
+		
+		it('Gracefully handle an event with an empty message', done => {
+			var e = new EventModel(rawSqs__no_message);
+			expect(e.ingest._body).to.be.defined;
+			expect(Object.keys(e.ingest._body).length).to.equal(0);
 			done();
 		});
 	
