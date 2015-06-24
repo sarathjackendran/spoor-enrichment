@@ -39,6 +39,16 @@ var pipeline = stream => {
 		.pipe(es.map((event, next) => {
 			next(null, transforms.userAgent(event));
 		}))
+		.pipe(es.map((event, next) => {
+			transforms.sessionApi(event)
+				.then(user => {
+					event.annotate('user', user);
+					next(null, event);
+				})
+				.catch(err => {
+					next(err, event);	// TODO annotate an 'error' flag
+				});
+		}))
 		.pipe(es.stringify())
 		.pipe(process.stdout)
 }

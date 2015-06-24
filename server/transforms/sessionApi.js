@@ -25,6 +25,8 @@ module.exports = function (event) {
 			resolve(user);
 		};
 		
+		console.log('transforms/session-api', 'session', session);
+		
 		//statsd.increment('ingest.consumer.transforms.session-api.fetch.request', 1);
 
 		fetch('https://sessionapi-glb.memb.ft.com/membership/sessions/' + session, {
@@ -34,7 +36,12 @@ module.exports = function (event) {
 			.then((res) => {
 				console.log('transforms/session-api', 'status', res.status);
 				//statsd.increment('ingest.consumer.transforms.session-api.fetch.response.' + res.status, 1);
-				return res.json();
+				
+				if (res.status === 200) {
+					return res.json();
+				} else {
+					return { }
+				}
 			})
 			.then((content) => {
 				console.log('transforms/session-api', 'response', JSON.stringify(content));
