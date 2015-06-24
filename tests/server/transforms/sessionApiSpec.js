@@ -7,18 +7,17 @@ var sinon	= require('sinon');
 var fs		= require('fs');
 var Mitm	= require("mitm")
 
-var sessionApi = require('../../../dist/transforms').sessionApi;
+var sessionApi	= require('../../../dist/transforms').sessionApi;
+var EventModel	= require('../../../dist/models').EventModel;
 
-// FIXME - needs a message model
-var message = {
-	ingest: JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' })),
-	egest: {}
-}
-message.ingest.BodyAsJson = JSON.parse(message.ingest.Body);
+var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
+var rawSqs__no_session = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--no-session', { encoding: 'utf8' }));
+var e;
 
-describe('Session API', function () {
+describe('Session API', function() {
 
 	beforeEach(() => {
+		e = new EventModel(rawSqs);
 		this.mitm = Mitm();
 	})
 	
@@ -32,7 +31,7 @@ describe('Session API', function () {
 			expect(req.headers['ft_api_key']).to.exist;
 			done();
 		})
-		sessionApi(message);
+		sessionApi(e);
 	});
 
 	it('Ignore messages with invalid cookies', done => {
@@ -40,7 +39,7 @@ describe('Session API', function () {
 			res.statusCode = 404;	// Session API responds with 404 if the token is invalid
 			res.end('{}');
 		})	
-		sessionApi(message)
+		sessionApi(e)
 			.then(function (user) {
 				expect(user.uuid).to.not.exist;
 				done();
@@ -48,7 +47,7 @@ describe('Session API', function () {
 	});
 
 	it('Ignore messages with no session token', done => {
-		sessionApi({ ingest: { } })
+		sessionApi(new EventModel(rawSqs__no_session))
 			.then(function (user) {
 				expect(user.uuid).to.not.exist;
 				done();
@@ -60,11 +59,11 @@ describe('Session API', function () {
 			res.statusCode = 503;
 			res.end('{}');
 		})	
-		sessionApi(message)
+		sessionApi(e)
 			.then(function (user) {
 				expect(user.uuid).to.not.exist;
 				done();
 			});
 	});
-	
+
 });

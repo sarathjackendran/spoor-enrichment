@@ -4,24 +4,19 @@ var fetch	= require('node-fetch');
 
 require('es6-promise').polyfill();
 
-module.exports = function (data) {
+module.exports = function (event) {
 	
 	return new Promise(function(resolve, reject) {
 
-		// FIXME - sort out a safe read - Eg. new Message({ ... }).get('ingest.cookie');
-		try {
-			var cookie = data.ingest.BodyAsJson.envelope.headers.cookie;
-		} catch (e) { 
-			console.log('FIXME!!!')
-		}
-		
+		var cookie = event.headers().cookie;
+
 		if (!cookie) resolve({ });
 
 		var match = cookie.match(/FTSESSION=([^;]+)/i);
 		var session = (match) ? match[1] : undefined;
 		
 		var user = {
-			token: session
+			sessionToken: session
 		};
 
 		//console.log('transforms/session-api', 'validating', session);
