@@ -1,21 +1,14 @@
 
 var UAParser	= require('ua-parser-js');
-var moment		= require('moment');
 
-var moment = require('moment');
-
-module.exports = function (data) {
+module.exports = function (event) {
 	
-	// FIXME - sort out a safe read - Eg. new Message({ ... }).get('ingest.cookie');
-	try {
-		var uaString = data.ingest.BodyAsJson.envelope.headers['user-agent'];
-	} catch (e) { 
-		console.log('FIXME!!!');
-		return data;
-	}
-
+	var headers = event.headers();
+	
+	if (!headers['user-agent']) return event;
+	
 	var parser = new UAParser();
-	parser.setUA(uaString);
-	data.egest.user.ua = parser.getResult();
-	return data;
+	parser.setUA(headers['user-agent']);
+	event.annotate('ua', parser.getResult());
+	return event;
 }
