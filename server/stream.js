@@ -67,7 +67,7 @@ var sqsStream = () => {
 				
 					var sqsStream = new Readable();
 					sqsStream._read = function noop() {};
-					sqsStream.push(JSON.stringify(data.Messages[0])); // FIXME allow more than one
+					sqsStream.push(JSON.stringify(data.Messages[0])); // FIXME allow more than one message. FIXME. ideally we wouldn't do a JSON.stringify.
 					sqsStream.push(null)
 					
 					pipeline(sqsStream);
