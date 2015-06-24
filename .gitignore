@@ -4,3 +4,4 @@ dist
 dist-tests
 .haikro-cache
 node-*
+config
