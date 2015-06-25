@@ -21,7 +21,7 @@ EventModel.prototype._sqsToJson = function () {
 		}
 
 		this.ingest._bodyFlattened = flatten(this.ingest._body);
-		this.ingest._headers = this.ingest._asJson.envelope.headers || {}; 
+		this.ingest._headers = this.ingest._asJson.headers || {}; 
 	} catch (err) {
 		console.log(err);
 		this.ingest._asJson = {} 

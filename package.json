@@ -21,9 +21,12 @@
   },
   "devDependencies": {
     "babel": "^5.4.7",
+    "chai": "^3.0.0",
     "gulp": "^3.9.0",
     "gulp-babel": "^5.1.0",
     "haikro": "^1.14.1",
-    "mitm": "^1.1.0"
+    "mitm": "^1.1.0",
+    "mocha": "^2.2.5",
+    "sinon": "^1.15.3"
   }
 }

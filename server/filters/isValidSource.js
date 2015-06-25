@@ -6,6 +6,8 @@ module.exports = function (data) {
 /*
 	FIXME
 
+   category, action and system are MANDATORY, everything else is OPTIONAL
+
 	"category": "video",										// Category for this event e.g. page
 	"action": "play",											// Action for this event e.g. view
 	"system": {
