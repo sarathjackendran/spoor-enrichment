@@ -66,6 +66,13 @@ var sqsStream = () => {
 					console.log(err);
 					return;
 				}
+					
+
+				if (!data.Messages) {
+					console.log('Found no new messages');
+					pollQueueForMessages();
+					return;
+				}
 
 				var d = domain.create();
 				
@@ -74,7 +81,7 @@ var sqsStream = () => {
 				});
 				
 				d.run(function() {
-				
+			
 					var sqsStream = new Readable();
 					sqsStream._read = function noop() {};
 					sqsStream.push(JSON.stringify(data.Messages[0])); // FIXME allow more than one message. FIXME. ideally we wouldn't do a JSON.stringify.
