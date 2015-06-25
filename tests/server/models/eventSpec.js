@@ -20,7 +20,7 @@ describe('Event', () => {
 
 		it('Represent the ingest queue as JSON', done => {
 			var e = new EventModel(rawSqs);
-			expect(e.ingest._asJson.envelope.headers['user-agent']).to.contain('Mozilla/5.0 (Windows NT 6.3; Win64; x64;');
+			expect(e.ingest._asJson.headers['user-agent']).to.contain('Mozilla/5.0 (Windows NT 6.3; Win64; x64;');
 			expect(e.ingest._body.videoid).to.equal(4283366118001);
 			console.log(e.ingest._body);
 			done();
