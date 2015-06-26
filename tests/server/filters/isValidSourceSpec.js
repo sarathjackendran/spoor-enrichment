@@ -2,20 +2,29 @@
 
 'use strict';
 
-var expect			= require('chai').expect;
-var sinon			= require('sinon');
+var expect	= require('chai').expect;
+var sinon	= require('sinon');
+var fs		= require('fs');
 
-var isValidSource	= require('../../../dist/filters').isValidSource;
+var EventModel = require('../../../dist/models').EventModel;
+var isValidSource = require('../../../dist/filters').isValidSource;
 
-describe('Source', function () {
+var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
+var rawSqs__valid_message = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--valid-message', { encoding: 'utf8' }));
+
+describe('Source validation', function () {
 	
-	it('Must specify the source of the event', done => {
-		expect( isValidSource({ }) ).to.be.false;
+	it('Mark messages without action, category, source as invalid', done => {
+		var e = new EventModel(rawSqs);
+		isValidSource(e);
+		expect(e.annotations().validation.isValid).to.be.false;
 		done();
 	});
 	
-	it('Must specify the type of event', done => {
-		expect( isValidSource({ event: { source: "123", action: "123" } }) ).to.be.true;
+	it('Must specify the action, category, source of an event', done => {
+		var e = new EventModel(rawSqs__valid_message);
+		isValidSource(e);
+		expect(e.annotations().validation.isValid).to.be.true;
 		done();
 	});
 
