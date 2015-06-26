@@ -1,12 +1,21 @@
 // `npm install rx randomstring es6-promise gulp babel gulp-babel` ; make run 
 
 var AWS				= require('aws-sdk'); 
-var transforms		= require('./transforms');
-var filters			= require('./filters');
-var EventModel		= require('./models').EventModel;
 var Readable		= require('stream').Readable;
 var domain			= require('domain');
 var es				= require('event-stream');
+
+var sinks			= require('./sinks');
+var filters			= require('./filters');
+var transforms		= require('./transforms');
+var EventModel		= require('./models').EventModel;
+
+var EventEmitter	= require('events').EventEmitter;
+
+const emitter = new EventEmitter();
+
+emitter.on('enriched', sinks.kinesis);
+emitter.on('enriched', sinks.sqs);
 
 require('es6-promise').polyfill();
 
@@ -60,10 +69,15 @@ var pipeline = stream => {
 					next(null, event);
 				})
 				.catch(err => {
+					console.log('error', err);
 					next(err, event);	// TODO annotate an 'error' flag
 				});
 		}))
 		.pipe(es.stringify())
+		.pipe(es.map((event, next) => {
+			emitter.emit('enriched', event);
+			next(null, event);
+		}))
 		.pipe(process.stdout)
 }
 	
@@ -75,35 +89,54 @@ var sqsStream = () => {
 			QueueUrl: sqsUrlIngest,
 			WaitTimeSeconds: 20
 		}, (err, data) => {
-		
+
 				if (err) {
 					console.log(err);
 					return;
 				}
-					
 
 				if (!data.Messages) {
+					
 					console.log('Found no new messages');
-				} else {
-
-					console.log('Found a new messages');
-
-					var d = domain.create();
-					
-					d.on('error', function (err) {
-						console.log('error', err)
-					});
-					
-					d.run(function() {
 				
+				} else {
+					
+					console.log('Found a new message');
+
+						// FIXME allow more than one message. FIXME. ideally we wouldn't do a JSON.stringify.
+
 						var sqsStream = new Readable();
 						sqsStream._read = function noop() {};
-						sqsStream.push(JSON.stringify(data.Messages[0])); // FIXME allow more than one message. FIXME. ideally we wouldn't do a JSON.stringify.
-						sqsStream.push(null)
+						sqsStream.push(JSON.stringify(data.Messages[0]));
+						sqsStream.push(null);
 						
-						pipeline(sqsStream);
+						var d = domain.create();
+						
+						d.on('error', function (err) {
+							console.log('error processing message', err, data.Messages[0])
+						});
+						
+						d.run(function() {
+							pipeline(sqsStream);
+						})
 
-					})
+						console.log('deleting message', sqsUrlIngest);
+						
+						sqs.deleteMessage({
+							QueueUrl: sqsUrlIngest,
+							ReceiptHandle: data.Messages[0].ReceiptHandle
+						}, function(err, data) {
+							if (err) {
+								console.log('error deleting message', err, err.stack);		// an error occurred
+								//statsd.increment('ingest.consumer.deleteMessage.error', 1);
+							}
+							else {
+								console.log('delete ok', data);				// successful response		
+								//statsd.increment('ingest.consumer.deleteMessage.success', 1);
+							}
+						})
+
+					//})
 				}
 
 				pollQueueForMessages();
