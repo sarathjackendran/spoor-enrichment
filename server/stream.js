@@ -31,6 +31,9 @@ var pipeline = stream => {
 			next(null, event);
 		}))
 		.pipe(es.map((event, next) => {
+			next(null, filters.isValidSource(event));
+		}))
+		.pipe(es.map((event, next) => {
 			next(null, transforms.geo(event));
 		}))
 		.pipe(es.map((event, next) => {
@@ -43,9 +46,17 @@ var pipeline = stream => {
 			next(null, transforms.ingestQueueMetadata(event));
 		}))
 		.pipe(es.map((event, next) => {
-			transforms.sessionApi(event)
-				.then(user => {
+			next(null, transforms.ingestQueueMetadata(event));
+		}))
+		.pipe(es.map((event, next) => {
+			Promise.all([
+					transforms.sessionApi(event),
+					transforms.contentApi(event)
+				])
+				.then(all => {
+					var [user, content] = all;
 					event.annotate('user', user);
+					event.annotate('content', content);
 					next(null, event);
 				})
 				.catch(err => {
@@ -74,6 +85,8 @@ var sqsStream = () => {
 				if (!data.Messages) {
 					console.log('Found no new messages');
 				} else {
+
+					console.log('Found a new messages');
 
 					var d = domain.create();
 					

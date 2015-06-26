@@ -6,10 +6,11 @@ var statsd	= require('../lib/statsd');
 const isArticle = /([a-f0-9-]{36})/;
 
 // 
-module.exports = function (referrer) {
+module.exports = function (event) {
 	return new Promise((resolve, reject) => {
 
-		var r = (referrer) ? url.parse(referrer) : {};
+		// FIXME - extract `event.body.context.article.uuid`
+		var r = (event.headers().referrer) ? url.parse(event.headers().referrer) : {};
 		
 		if (!r.pathname) resolve({});
 	
@@ -18,7 +19,6 @@ module.exports = function (referrer) {
 		console.log('models/content-api', 'fetching', r.pathname, !!article);
 		
 		if (!article) resolve({});
-		if (Math.random() > 1) resolve({});	// FIXME allows us to scale up
 
 		// FIXME - extract uuid from r.pathname
 		console.log('models/content-api', 'fetching n', article[0]);
