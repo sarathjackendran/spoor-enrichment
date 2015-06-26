@@ -1,18 +1,11 @@
-// Transpose the Ingest queue message in to a 'spoor meta data object' 
-
 module.exports = function (event) {
-	event.egest.spoor = {};
-	event.egest.spoor.ingest = {};
-	event.egest.spoor.ingest.raw = JSON.stringify(event.ingest);
+	
+	var meta = {
+		MessageId: event.ingest._raw.MessageId, 
+		ReceiptHandle: event.ingest._raw.ReceiptHandle,
+		MD5OfBody: event.ingest._raw.MD5OfBody
+	}	
+
+	event.annotate('ingestSqs', meta);
 	return event;
 }
-
-/*
- 
-   TODO ensure these are copied to egest
-	MD5OfBody: message.MD5OfBody,
-	ReceiptHandle: message.ReceiptHandle,
-	MessageId: message.MessageId
-
-*/
-
