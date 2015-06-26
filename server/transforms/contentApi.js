@@ -10,7 +10,7 @@ module.exports = function (event) {
 	return new Promise((resolve, reject) => {
 
 		// FIXME - extract `event.body.context.article.uuid`
-		var r = (event.headers().referrer) ? url.parse(event.headers().referrer) : {};
+		var r = (event.headers().referer) ? url.parse(event.headers().referer) : {};
 		
 		if (!r.pathname) resolve({});
 	
