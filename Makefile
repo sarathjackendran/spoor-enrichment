@@ -4,7 +4,9 @@ compile:
 run: compile
 	@export accessKey=`cat ~/.aws-access.spoor`; \
 	 export secretAccessKey=`cat ~/.aws-secret.spoor`; \
-	 export SQS_INGEST=`cat ~/.aws-sqs.spoor`; \
+	 export SQS_INGEST=`cat ~/.aws-sqs.spoor-v2`; \
+	 export CAPI_API_KEY=`cat ~/.ftapi_v2`; \
+	 export SESSION_API_KEY=`cat ~/.session-api`; \
 	 node dist/stream.js
 
 test: compile
