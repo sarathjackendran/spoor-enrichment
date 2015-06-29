@@ -2,6 +2,8 @@
 var moment = require('moment');
 
 module.exports = function (event) {
+	
+	//event.
 
 	var time = {
 		weekday: !/^0|6$/.test(new Date().getDay()),

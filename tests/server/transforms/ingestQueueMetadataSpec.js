@@ -17,6 +17,7 @@ describe('Ingest queue metadata', function () {
 		var e = new EventModel(rawSqs);
 		ingestQueueMetadata(e);
 		expect(e.annotations().ingestSqs.MessageId).to.equal('06eaa235-6712-45da-bae2-1a9ecfd1ce64');
+		expect(e.annotations().ingestSqs.timeReceived).to.equal('2015-06-16T16:24:00.795Z');
 		done();
 	});
 
