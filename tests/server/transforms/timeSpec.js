@@ -10,6 +10,7 @@ var time	= require('../../../dist/transforms').time;
 var EventModel	= require('../../../dist/models').EventModel;
 
 var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
+var rawSqs__time_offset = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--time-offset', { encoding: 'utf8' }));
 var e;
 
 describe('Time', function () {
@@ -58,6 +59,14 @@ describe('Time', function () {
 		var t = time(e);
 		expect(e.annotations().time.now).to.equal('2015-06-15T20:12:01.000Z');
 		done()
+	});
+	
+	it('Use the offset time where specified', done => {
+		var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:12:01 UTC').getTime());
+		var offset = new EventModel(rawSqs__time_offset);
+		time(offset);
+		expect(offset.annotations().time.now).to.equal('2015-06-15T20:10:21.000Z'); // now minus 10000ms
+		done();
 	});
 
 });
