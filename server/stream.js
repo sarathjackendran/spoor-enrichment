@@ -58,6 +58,9 @@ var pipeline = stream => {
 			next(null, transforms.ingestQueueMetadata(event));
 		}))
 		.pipe(es.map((event, next) => {
+			next(null, transforms.referrer(event));
+		}))
+		.pipe(es.map((event, next) => {
 			Promise.all([
 					transforms.sessionApi(event),
 					transforms.contentApi(event)
