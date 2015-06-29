@@ -11,7 +11,7 @@ var contentApi = require('../../../dist/transforms').contentApi;
 var EventModel = require('../../../dist/models').EventModel;
 
 var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
-var rawSqs__no_referer = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--no-referer', { encoding: 'utf8' }));
+var rawSqs__no_referrer = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--no-referrer', { encoding: 'utf8' }));
 var rawSqs__content_id = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--content-id', { encoding: 'utf8' }));
 var capi__response = fs.readFileSync('./tests/server/fixtures/capi__response', { encoding: 'utf8' }); 
 
@@ -63,7 +63,7 @@ describe('Content API', function() {
 
 	
 	it('Do not enrich articles with no referer or UUID in the message body', done => {
-		var e = new EventModel(rawSqs__no_referer);
+		var e = new EventModel(rawSqs__no_referrer);
 		contentApi(e)
 			.then(function (res) {
 				expect(res).to.deep.equal({});
