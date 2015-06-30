@@ -44,6 +44,9 @@ module.exports = stream => {
 			next(null, transforms.referrer(event));
 		}))
 		.pipe(es.map((event, next) => {
+			next(null, transforms.url(event));
+		}))
+		.pipe(es.map((event, next) => {
 			Promise.all([
 					transforms.sessionApi(event),
 					transforms.contentApi(event)
