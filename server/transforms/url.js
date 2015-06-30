@@ -8,7 +8,7 @@ module.exports = function (event) {
 	
 	if (location) {
 		var tokens = url.parse(location);
-		tokens.querystring = querystring.parse(tokens.search);
+		tokens.querystring = (tokens.search) ? querystring.parse(tokens.search.slice(1)) : {};
 		event.annotate('url', tokens);
 	} else {
 		event.annotate('url', {});

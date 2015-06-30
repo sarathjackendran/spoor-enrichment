@@ -40,6 +40,7 @@ describe('Location', function () {
 	it('Extract the querystring paramters from the url', done => {
 		var e = new EventModel(rawSqs__url);
 		url(e);
+		expect(e.annotations().url.querystring.q).to.equal('sausages');
 		expect(e.annotations().url.querystring.page).to.equal('2');
 		done();
 	});
