@@ -4,7 +4,8 @@ var moment = require('moment');
 module.exports = function (event) {
 
 	// the actual time of the event
-	var actualTime = new Date(new Date() - (event.pluck('time.offset') || 0));
+	var offset = event.pluck('time.offset') || 0;
+	var actualTime = new Date(new Date() - offset);
 
 	console.log(event.pluck('time.offset'), actualTime)
 
@@ -13,7 +14,8 @@ module.exports = function (event) {
 		day: actualTime.toJSON().slice(0, 10) + 'T00:00:00Z',
 		hour: actualTime.toJSON().slice(0, 14) + '00:00Z',
 		now: actualTime.toJSON(),
-		week: moment(actualTime).format('YYYYw')	// FIXME moment offset
+		week: moment(actualTime).format('YYYYw'), // FIXME moment offset
+		offset: offset
 	}
 
 	event.annotate('time', time);

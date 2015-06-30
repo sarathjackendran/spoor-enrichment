@@ -66,6 +66,7 @@ describe('Time', function () {
 		var offset = new EventModel(rawSqs__time_offset);
 		time(offset);
 		expect(offset.annotations().time.now).to.equal('2015-06-15T20:10:21.000Z'); // now minus 10000ms
+		expect(offset.annotations().time.offset).to.equal(100000);
 		done();
 	});
 
