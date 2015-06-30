@@ -4,7 +4,7 @@ var querystring = require('querystring');
 
 module.exports = function (event) {
 	
-	var location = event.pluck('context.url'); // FIXME url vs location 
+	var location = event.pluck('context.url');
 
 	if (location) {
 		var tokens = url.parse(location);
