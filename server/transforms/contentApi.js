@@ -9,7 +9,7 @@ const isArticle = /([a-f0-9-]{36})/;
 module.exports = function (event) {
 	return new Promise((resolve, reject) => {
 
-		var uuid = event.pluck('context.content.id');
+		var uuid = event.pluck('context.content.uuid');
 
 		if (!uuid) {
 		
