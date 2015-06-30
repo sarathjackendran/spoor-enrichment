@@ -4,4 +4,4 @@ module.exports.time					= require('./time');
 module.exports.ingestQueueMetadata	= require('./ingestQueueMetadata');
 module.exports.sessionApi			= require('./sessionApi');
 module.exports.contentApi			= require('./contentApi');
-module.exports.referrer				= require('./referrer');
+module.exports.url					= require('./url');

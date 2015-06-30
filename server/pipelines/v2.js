@@ -41,7 +41,7 @@ module.exports = stream => {
 			next(null, transforms.ingestQueueMetadata(event));
 		}))
 		.pipe(es.map((event, next) => {
-			next(null, transforms.referrer(event));
+			next(null, transforms.url(event));
 		}))
 		.pipe(es.map((event, next) => {
 			Promise.all([
