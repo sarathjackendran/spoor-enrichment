@@ -1,0 +1,38 @@
+{
+    "category": "video",
+    "action": "play",
+    "system": {
+        "source": "o-tracking",
+        "version": "1.0.0",
+        "api_key":  "0f7464b4-3f4d-11e4-984b-00144feabdc0"
+    },
+    "device": {                                                 
+        "spoor_id": "0f7464b4-3f4d-11e4-984b-00144feabdc0",
+        "spoor_session": "0f7464b4-3f4d-11e4-984b-00144feabdc0",
+        "user_agent": "Mozilla ...",
+        "ip": "123.123.123.123",
+        "layout": "S", 
+        "orientation": "portrait"
+    },
+    "user": {               
+        "ft_session": "asdf324dfag1ds%asdf1A-1sadsadf",
+        "ft_guid": "0f7464b4-3f4d-11e4-984b-00144feabdc0",
+        "passport_id": "1234556789",
+        "erights_id": "12345567"
+    },
+    "time": {
+         "offset": 234
+    },
+    "context": {
+        "id": "0f7464b4-3f4d-11e4-984b-00144feabdc0",
+        "component_id": "0f7464b4-3f4d-11e4-984b-00144feabdc0",
+        "root_id": "0f7464b4-3f4d-11e4-984b-00144feabdc0",
+        "product": "ft.com",
+        "uuid": "",
+        "url": "...",
+        "referrer": "...",
+        "anything": "goes here",
+        "could": [ "be", "an", "array" ],
+        "or" : { "might": { "be": ["an", "object"] }}
+    }
+}
