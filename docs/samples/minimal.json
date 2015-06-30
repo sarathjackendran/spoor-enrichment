@@ -1,0 +1,8 @@
+{
+  "category": "video",
+  "action": "play",
+  "system": {
+		"source":  "next.ft.com",
+		"api_key": "0f7464b4-3f4d-11e4-984b-00144feabdc0"
+  }
+}
