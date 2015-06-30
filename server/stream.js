@@ -15,7 +15,9 @@ AWS.config.update({
 
 var sqs = new AWS.SQS();
 var sqsUrlIngest = process.env.SQS_INGEST;
-	
+
+var isProduction = process.env.NODE_ENV === 'production';
+
 var sqsStream = () => {
 	
 	(function pollQueueForMessages() {
@@ -56,21 +58,24 @@ var sqsStream = () => {
 						})
 
 						console.log('deleting message', sqsUrlIngest);
-						
-						sqs.deleteMessage({
-							QueueUrl: sqsUrlIngest,
-							ReceiptHandle: data.Messages[0].ReceiptHandle
-						}, function(err, data) {
-							if (err) {
-								console.log('error deleting message', err, err.stack);		// an error occurred
-								//statsd.increment('ingest.consumer.deleteMessage.error', 1);
-							}
-							else {
-								console.log('delete ok', data);				// successful response		
-								//statsd.increment('ingest.consumer.deleteMessage.success', 1);
-							}
-						})
+	
+						if (isProduction) {
 
+							sqs.deleteMessage({
+								QueueUrl: sqsUrlIngest,
+								ReceiptHandle: data.Messages[0].ReceiptHandle
+							}, function(err, data) {
+								if (err) {
+									console.log('error deleting message', err, err.stack);		// an error occurred
+									//statsd.increment('ingest.consumer.deleteMessage.error', 1);
+								}
+								else {
+									console.log('delete ok', data);				// successful response		
+									//statsd.increment('ingest.consumer.deleteMessage.success', 1);
+								}
+							})
+
+						}
 					//})
 				}
 
