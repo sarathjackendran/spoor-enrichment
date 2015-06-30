@@ -1,8 +1,1 @@
-module.exports.country				= require('./country');
-module.exports.referrer				= require('./referrer');
-module.exports.time					= require('./time');
-module.exports.userAgent			= require('./userAgent');
-module.exports.geoLocation			= require('./geoLocation');
-module.exports.contentApi			= require('./contentApi');
-module.exports.sessionApi			= require('./sessionApi');
-module.exports.sqsMessageMetadata   = require('./sqsMessageMetadata');
+module.exports.EventModel			= require('./event');

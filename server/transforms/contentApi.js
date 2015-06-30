@@ -6,35 +6,48 @@ var statsd	= require('../lib/statsd');
 const isArticle = /([a-f0-9-]{36})/;
 
 // 
-module.exports = function (referrer) {
+module.exports = function (event) {
 	return new Promise((resolve, reject) => {
 
-		var r = (referrer) ? url.parse(referrer) : {};
-		
-		if (!r.pathname) resolve({});
-	
-		var article = isArticle.exec(r.pathname);
-		
-		console.log('models/content-api', 'fetching', r.pathname, !!article);
-		
-		if (!article) resolve({});
-		if (Math.random() > 1) resolve({});	// FIXME allows us to scale up
+		var uuid = event.pluck('context.content.id');
 
-		// FIXME - extract uuid from r.pathname
-		console.log('models/content-api', 'fetching n', article[0]);
+		if (!uuid) {
+		
+			var r = (event.headers().referer) ? url.parse(event.headers().referer) : {};
+		
+			if (!r.pathname) {
+				resolve({});
+			}
+		
+			var article = isArticle.exec(r.pathname);
+			
+			if (!article) {
+				resolve({})
+			};
+
+			uuid = article[0];
+		}
+
+		console.log('models/content-api', 'fetching', uuid);
 
 		statsd.increment('ingest.consumer.models.content-api.fetch.request', 1);
 
-		fetch('http://api.ft.com/content/' + article[0], {
+		fetch('http://api.ft.com/content/' + uuid, {
 				timeout: 2000,
 				headers: { 'x-api-key': process.env.CAPI_API_KEY }
 			})
-			.then((res) => {
-				console.log('models/content-api', article[0], res.status);
+			.then(res => {
+				
+				console.log('models/content-api', uuid, res.status);
 				statsd.increment('ingest.consumer.models.content-api.fetch.response.' + res.status, 1);
+				
+				if (res.status !== 200) {
+					resolve({});
+				}
+				
 				return res.json();
 			})
-			.then((content) => {
+			.then(content => {
 				console.log('models/content-api', article[0], content.title);
 				resolve({
 					uuid: article[0],

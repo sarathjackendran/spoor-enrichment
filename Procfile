@@ -1,1 +1,1 @@
-sqs: node dist/consumer.js
+sqs: node dist/stream.js
