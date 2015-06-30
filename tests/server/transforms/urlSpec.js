@@ -6,7 +6,7 @@ var expect	= require('chai').expect;
 var sinon	= require('sinon');
 var fs		= require('fs');
 
-var url			= require('../../../dist/transforms').url;
+var url		= require('../../../dist/transforms').url;
 var EventModel	= require('../../../dist/models').EventModel;
 
 var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
