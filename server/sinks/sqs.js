@@ -12,7 +12,12 @@ var sqs = new AWS.SQS();
 var sqsUrlEgest = process.env.SQS_EGEST;
 
 module.exports = function (message) {
-	
+
+	if (!process.env.sink_sqs) {
+		console.log('sinks/sqs', 'SQS sink is turned off');
+		return;
+	} 
+
 	console.log('sinks/sqs', 'writing message to SQS');
 	
 	metrics.count('sinks.sqs.count', 1);

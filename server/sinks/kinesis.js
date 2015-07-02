@@ -13,6 +13,11 @@ var kinesis = new AWS.Kinesis();
 
 module.exports = function (message) {
 	
+	if (!process.env.sink_kinesis) {
+		console.log('sinks/kinesis', 'Kinesis sink is turned off');
+		return;
+	} 
+	
 	console.log('sinks/kinesis', 'writing message to Kinesis');
 	metrics.count('sinks.kinesis.count', 1);
 
