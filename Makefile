@@ -1,3 +1,9 @@
+
+clean:
+	@echo "cleaning dist files"
+	 rm -Rf dist/*; \
+	 rm -Rf dist-tests/*
+
 compile:
 	 gulp compile
 

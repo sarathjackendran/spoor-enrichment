@@ -7,7 +7,7 @@ module.exports = function (event) {
 	var offset = event.pluck('time.offset') || 0;
 	var actualTime = new Date(new Date() - offset);
 
-	console.log(event.pluck('time.offset'), actualTime)
+	console.log('transforms/time', event.received(), event.pluck('time.offset'), actualTime);
 
 	var time = {
 		weekday: !/^0|6$/.test(actualTime.getDay()),
