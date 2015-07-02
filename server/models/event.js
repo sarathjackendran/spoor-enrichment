@@ -44,7 +44,8 @@ EventModel.prototype.pluck = function (val) {
 }
 
 EventModel.prototype.received = function (val) {
-	return (this.ingest._asJson.time) ? this.ingest._asJson.time.received : undefined;
+	return (this.ingest._asJson.time && this.ingest._asJson.time.received) ? 
+				new Date(this.ingest._asJson.time.received) : new Date();
 }
 
 EventModel.prototype.annotate = function (key, val) {
