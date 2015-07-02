@@ -43,9 +43,6 @@ module.exports = stream => {
 			next(null, transforms.ingestQueueMetadata(event));
 		}))
 		.pipe(es.map((event, next) => {
-			next(null, transforms.ingestQueueMetadata(event));
-		}))
-		.pipe(es.map((event, next) => {
 			next(null, transforms.url(event));
 		}))
 		.pipe(es.map((event, next) => {
