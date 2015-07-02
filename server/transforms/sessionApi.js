@@ -6,6 +6,11 @@ require('es6-promise').polyfill();
 
 module.exports = function (event) {
 	
+	if (!process.env.transform_session) {
+		console.log('transforms/session-api', 'is switched off');
+		return Promise.resolve({});
+	}
+	
 	return new Promise(function(resolve, reject) {
 
 		metrics.count('pipeline.transforms.sessionApi.count', 1);

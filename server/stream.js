@@ -58,16 +58,18 @@ var sqsStream = () => {
 							sqsStream.push(JSON.stringify(data.Messages[0]));
 							sqsStream.push(null);
 							
-							var d = domain.create();
-							
-							d.on('error', function (err) {
-								metrics.count('ingest.consumer.domain.error', 1);
-								console.log('error processing message', err, data.Messages[0])
-							});
-							
-							d.run(function() {
+							if (process.env.use_domains) {
+								var d = domain.create();
+								d.on('error', function (err) {
+									metrics.count('ingest.consumer.domain.error', 1);
+									console.log('error processing message', err, data.Messages[0])
+								});
+								d.run(function() {
+									pipelines.v2(sqsStream);
+								})
+							} else {
 								pipelines.v2(sqsStream);
-							})
+							}
 
 						}
 	

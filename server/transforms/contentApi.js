@@ -7,6 +7,12 @@ const isArticle = /([a-f0-9-]{36})/;
 
 // 
 module.exports = function (event) {
+	
+	if (!process.env.transform_capi) {
+		console.log('transforms/content-api', 'is switched off');
+		return Promise.resolve({});
+	}
+
 	return new Promise((resolve, reject) => {
 	
 		metrics.count('pipeline.transforms.contentApi.count', 1);
