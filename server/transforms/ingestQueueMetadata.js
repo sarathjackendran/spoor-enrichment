@@ -1,4 +1,8 @@
+var metrics = require('next-metrics');
+
 module.exports = function (event) {
+		
+	metrics.count('pipeline.transforms.ingestQueueMetadata.count', 1);
 	
 	var meta = {
 		MessageId: event.ingest._raw.MessageId, // FIXME - getter? 
