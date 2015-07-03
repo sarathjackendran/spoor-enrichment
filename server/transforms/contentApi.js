@@ -5,6 +5,18 @@ var metrics = require('next-metrics');
 
 const isArticle = /([a-f0-9-]{36})/;
 
+var pluckUuidFromHeaders = function (event) {
+	var r = (event.headers().referer) ? url.parse(event.headers().referer) : {};
+	if (!r.pathname) {
+		return false;
+	}
+	var article = isArticle.exec(r.pathname);
+	if (!article) {
+		return false;
+	};
+	return article[0];
+}
+
 // 
 module.exports = function (event) {
 	
@@ -13,63 +25,51 @@ module.exports = function (event) {
 		return Promise.resolve({});
 	}
 
-	return new Promise((resolve, reject) => {
+	metrics.count('pipeline.transforms.contentApi.count', 1);
+
+	var uuid = event.pluck('context.content.uuid');
+
+	if (!uuid) {
+		uuid = pluckUuidFromHeaders(event);
+	}
 	
-		metrics.count('pipeline.transforms.contentApi.count', 1);
+	if (!uuid) {
+		return Promise.resolve({});
+	}
 
-		var uuid = event.pluck('context.content.uuid');
+	console.log('models/content-api', 'fetching', uuid);
 
-		if (!uuid) {
+	metrics.count('pipeline.transforms.contentApi.fetch.request', 1);
 
-			var r = (event.headers().referer) ? url.parse(event.headers().referer) : {};
-		
-			if (!r.pathname) {
-				resolve({});
-			}
-		
-			var article = isArticle.exec(r.pathname);
-			
-			if (!article) {
-				resolve({})
-			};
-
-			uuid = article[0];
-		}
-
-		console.log('models/content-api', 'fetching', uuid);
-
-		metrics.count('pipeline.transforms.contentApi.fetch.request', 1);
-
-		fetch('http://api.ft.com/content/' + uuid, {
+	return fetch('http://api.ft.com/content/' + uuid, {
 				timeout: 2000,
-				headers: { 'x-api-key': process.env.CAPI_API_KEY }
-			})
-			.then(res => {
-				
-				console.log('models/content-api', uuid, res.status);
-				metrics.count('pipeline.transforms.contentApi.fetch.response.' + res.status, 1);
-				
-				if (res.status !== 200) {
-					resolve({});
+				headers: {
+					'x-api-key': process.env.CAPI_API_KEY
 				}
-				
+		})
+		.then(res => {
+			console.log('models/content-api', uuid, res.status);
+			metrics.count('pipeline.transforms.contentApi.fetch.response.' + res.status, 1);
+			if (res.status !== 200) {
+				console.log('models/content-api', 'status was not a 200', res.status);
+				return {};
+			} else {
 				return res.json();
-			})
-			.then(content => {
-				console.log('models/content-api', article[0], content.title);
-				resolve({
-					uuid: article[0],
-					title: content.title,
-					publishedDate: content.publishedDate,
-					age: (new Date() - new Date(content.publishedDate)) / 1000
-				})
-			})
-			.catch((err) => {
-				console.log('models/content-api', article[0], 'error', err);
-				metrics.count('pipeline.transforms.contentApi.error', 1);
-				resolve({});	// FIXME - could/should be a reject
-			})
-		
-	});
-};
+			}
+		})
+		.then(content => {
+			console.log('models/content-api', uuid, content.title);
+			return {
+				uuid: uuid,
+				title: content.title,
+				publishedDate: content.publishedDate,
+				age: (new Date() - new Date(content.publishedDate)) / 1000
+			};
+		})
+		.catch((err) => {
+			console.log('models/content-api', article[0], 'error', err);
+			metrics.count('pipeline.transforms.contentApi.error', 1);
+			return {};
+		})
 
+};
