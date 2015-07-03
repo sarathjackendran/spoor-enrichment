@@ -19,3 +19,21 @@ Operations to filter and transform the data are piped together, each step
 annotating the resulting data structure.
 
 If successful, the event model is pushed on to an egest Kinesis stream and SQS queue.
+
+### Flags
+
+The pipeline is controlled by several flags. The flags can be turned on or off
+by setting environment variables.
+
+Flag-controlled functionality defaults to off, i.e. the environment variable
+isn't set. 
+
+Turning a flag on :-
+
+`export pipeline=on`
+
+To turn a flag off just remove if from the environment:-
+
+`unset pipeline`
+
+Look at the code for a list of environment variables.
