@@ -11,12 +11,13 @@ var EventModel	= require('../../../dist/models').EventModel;
 
 var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
 var rawSqs__time_offset = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--time-offset', { encoding: 'utf8' }));
+var rawSqs__no_time_received = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--no-time-received', { encoding: 'utf8' }));
 var e;
 
 describe('Time', function () {
 	
 	beforeEach(() => {
-		e = new EventModel(rawSqs);
+		e = new EventModel(rawSqs__no_time_received);
 	});
 
 	it('Flag if the event happened on a weekend', done => {
@@ -65,8 +66,15 @@ describe('Time', function () {
 		var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:12:01 UTC').getTime());
 		var offset = new EventModel(rawSqs__time_offset);
 		time(offset);
-		expect(offset.annotations().time.now).to.equal('2015-06-15T20:10:21.000Z'); // now minus 10000ms
+		expect(offset.annotations().time.now).to.equal('2015-06-16T16:22:20.795Z'); // 'time received' minus 10000ms
 		expect(offset.annotations().time.offset).to.equal(100000);
+		done();
+	});
+	
+	it('Use the time the event was received where specified', done => {
+		var offset = new EventModel(rawSqs);
+		time(offset);
+		expect(offset.annotations().time.now).to.equal('2015-06-16T16:24:00.795Z');
 		done();
 	});
 
