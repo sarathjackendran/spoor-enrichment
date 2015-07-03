@@ -51,25 +51,31 @@ var sqsStream = () => {
 							
 						metrics.count('ingest.consumer.receiveMessage.found', 1);
 
-						var sqsStream = new Readable();
-						sqsStream._read = function noop() {};
-						sqsStream.push(JSON.stringify(data.Messages[0]));
-						sqsStream.push(null);
-						
-						var d = domain.create();
-						
-						d.on('error', function (err) {
-							metrics.count('ingest.consumer.domain.error', 1);
-							console.log('error processing message', err, data.Messages[0])
-						});
-						
-						d.run(function() {
-							pipelines.v2(sqsStream);
-						})
+						if (process.env.pipeline) {
+							
+							var sqsStream = new Readable();
+							sqsStream._read = function noop() {};
+							sqsStream.push(JSON.stringify(data.Messages[0]));
+							sqsStream.push(null);
+							
+							if (process.env.use_domains) {
+								var d = domain.create();
+								d.on('error', function (err) {
+									metrics.count('ingest.consumer.domain.error', 1);
+									console.log('error processing message', err, data.Messages[0])
+								});
+								d.run(function() {
+									pipelines.v2(sqsStream);
+								})
+							} else {
+								pipelines.v2(sqsStream);
+							}
 
-						console.log('deleting message', sqsUrlIngest);
+						}
 	
 						if (isProduction) {
+						
+							console.log('deleting message', sqsUrlIngest);
 
 							sqs.deleteMessage({
 								QueueUrl: sqsUrlIngest,

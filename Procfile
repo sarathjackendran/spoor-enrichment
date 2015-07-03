@@ -1,1 +1,1 @@
-sqs: node dist/stream.js
+sqs: forever -c 'node' dist/stream.js

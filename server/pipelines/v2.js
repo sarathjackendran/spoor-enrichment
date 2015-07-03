@@ -28,39 +28,67 @@ module.exports = stream => {
 			next(null, event);
 		}))
 		.pipe(es.map((event, next) => {
-			next(null, filters.isValidSource(event));
+			if (process.env.pipeline_model) { 
+				next(null, filters.isValidSource(event));
+			} else {
+				next(null, event);	
+			}
 		}))
 		.pipe(es.map((event, next) => {
-			next(null, transforms.geo(event));
+			if (process.env.pipeline_geo) { 
+				next(null, transforms.geo(event));
+			} else {
+				next(null, event);	
+			}
 		}))
 		.pipe(es.map((event, next) => {
-			next(null, transforms.time(event));
+			if (process.env.pipeline_time) { 
+				next(null, transforms.time(event));
+			} else {
+				next(null, event);	
+			}
 		}))
 		.pipe(es.map((event, next) => {
-			next(null, transforms.userAgent(event));
+			if (process.env.pipeline_ua) { 
+				next(null, transforms.userAgent(event));
+			} else {
+				next(null, event);	
+			}
 		}))
 		.pipe(es.map((event, next) => {
-			next(null, transforms.ingestQueueMetadata(event));
+			if (process.env.pipeline_ingest) { 
+				next(null, transforms.ingestQueueMetadata(event));
+			} else {
+				next(null, event);	
+			}
 		}))
 		.pipe(es.map((event, next) => {
-			next(null, transforms.url(event));
+			if (process.env.pipeline_url) { 
+				next(null, transforms.url(event));
+			} else {
+				next(null, event);	
+			}
 		}))
 		.pipe(es.map((event, next) => {
-			Promise.all([
-					transforms.sessionApi(event),
-					transforms.contentApi(event)
-				])
-				.then(all => {
-					var [user, content] = all;
-					event.annotate('user', user);
-					event.annotate('content', content);
-					next(null, event);
-				})
-				.catch(err => {
-					console.log('error', err);
-					next(err, event);	// TODO annotate an 'error' flag
-					metrics.count('pipeline.v2.error', 1);
-				});
+			if (process.env.pipeline_apis) { 
+				Promise.all([
+						transforms.sessionApi(event),
+						transforms.contentApi(event)
+					])
+					.then(all => {
+						var [user, content] = all;
+						event.annotate('user', user);
+						event.annotate('content', content);
+						next(null, event);
+					})
+					.catch(err => {
+						console.log('error', err);
+						next(err, event);	// TODO annotate an 'error' flag
+						metrics.count('pipeline.v2.error', 1);
+					});
+			} else {
+				next(null, event);	
+			}
 		}))
 		.pipe(es.stringify())
 		.pipe(es.map((event, next) => {
