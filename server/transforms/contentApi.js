@@ -52,7 +52,7 @@ module.exports = function (event) {
 			metrics.count('pipeline.transforms.contentApi.fetch.response.' + res.status, 1);
 			if (res.status !== 200) {
 				console.log('models/content-api', 'status was not a 200', res.status);
-				return {};
+				resolve({});
 			} else {
 				return res.json();
 			}
@@ -67,7 +67,7 @@ module.exports = function (event) {
 			};
 		})
 		.catch((err) => {
-			console.log('models/content-api', article[0], 'error', err);
+			console.log('models/content-api', uuid, 'error', err);
 			metrics.count('pipeline.transforms.contentApi.error', 1);
 			return {};
 		})
