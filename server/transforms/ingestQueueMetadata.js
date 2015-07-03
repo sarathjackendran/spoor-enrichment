@@ -8,7 +8,7 @@ module.exports = function (event) {
 		MessageId: event.ingest._raw.MessageId, // FIXME - getter? 
 		ReceiptHandle: event.ingest._raw.ReceiptHandle,
 		MD5OfBody: event.ingest._raw.MD5OfBody,
-		timeReceived: event.received()
+		timeReceived: event.received().toISOString()
 	}	
 
 	event.annotate('ingestSqs', meta);
