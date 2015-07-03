@@ -1,6 +1,6 @@
 
 var fetch	= require('node-fetch');
-//var statsd	= require('../lib/statsd');
+var metrics = require('next-metrics');
 
 require('es6-promise').polyfill();
 
@@ -8,6 +8,8 @@ module.exports = function (event) {
 	
 	return new Promise(function(resolve, reject) {
 
+		metrics.count('pipeline.transforms.sessionApi.count', 1);
+		
 		var cookie = event.headers().cookie;
 
 		if (!cookie) resolve({ });
@@ -19,15 +21,13 @@ module.exports = function (event) {
 			sessionToken: session
 		};
 
-		//console.log('transforms/session-api', 'validating', session);
-	
 		if (!session) {
 			resolve(user);
 		};
 		
 		console.log('transforms/session-api', 'session', session);
 		
-		//statsd.increment('ingest.consumer.transforms.session-api.fetch.request', 1);
+		metrics.count('pipeline.transforms.sessionApi.fetch.request', 1);
 
 		fetch('https://sessionapi-glb.memb.ft.com/membership/sessions/' + session, {
 				timeout: 2000,
@@ -35,7 +35,7 @@ module.exports = function (event) {
 			})
 			.then((res) => {
 				console.log('transforms/session-api', 'status', res.status);
-				//statsd.increment('ingest.consumer.transforms.session-api.fetch.response.' + res.status, 1);
+				metrics.count('pipeline.transforms.sessionApi.fetch.response.' + res.status, 1);
 				
 				if (res.status === 200) {
 					return res.json();
@@ -51,7 +51,7 @@ module.exports = function (event) {
 			})
 			.catch((err) => {
 				console.log('transforms/session-api', 'error', err);
-				//statsd.increment('ingest.consumer.transforms.session-api.error', 1);
+				metrics.count('pipeline.transforms.sessionApi.error', 1);
 				resolve(user);	// FIXME - could/should be a reject
 			})
 	});

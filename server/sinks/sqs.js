@@ -1,5 +1,6 @@
 
 var AWS				= require('aws-sdk'); 
+var metrics			= require('next-metrics')
 
 AWS.config.update({
 	accessKeyId: process.env.accessKey, 
@@ -12,11 +13,19 @@ var sqsUrlEgest = process.env.SQS_EGEST;
 
 module.exports = function (message) {
 	
-	console.log('Writing message to SQS', message);
+	console.log('sinks/sqs', 'writing message to SQS');
+	
+	metrics.count('sinks.sqs.count', 1);
 
 	sqs.sendMessage({
 		QueueUrl: sqsUrlEgest, MessageBody: message
 	}, function(err, data) {
-		console.log(err, data);
+		if (err) { 
+			console.log('sinks/sqs', err);
+			metrics.count('sinks.sqs.error', 1);
+		} else {
+			console.log('sinks/sqs', data);
+			metrics.count('sinks.sqs.ok', 1);
+		}
 	});
 };

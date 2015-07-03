@@ -1,8 +1,11 @@
 
-var url = require('url');
+var url			= require('url');
 var querystring = require('querystring');
+var metrics		= require('next-metrics');
 
 module.exports = function (event) {
+	
+	metrics.count('pipeline.transforms.url.count', 1);
 	
 	var location = event.pluck('context.url') || event.headers().referer;
 	

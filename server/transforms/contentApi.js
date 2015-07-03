@@ -1,18 +1,20 @@
 
 var url		= require('url');
 var fetch	= require('node-fetch');
-var statsd	= require('../lib/statsd');
+var metrics = require('next-metrics');
 
 const isArticle = /([a-f0-9-]{36})/;
 
 // 
 module.exports = function (event) {
 	return new Promise((resolve, reject) => {
+	
+		metrics.count('pipeline.transforms.contentApi.count', 1);
 
 		var uuid = event.pluck('context.content.uuid');
 
 		if (!uuid) {
-		
+
 			var r = (event.headers().referer) ? url.parse(event.headers().referer) : {};
 		
 			if (!r.pathname) {
@@ -30,7 +32,7 @@ module.exports = function (event) {
 
 		console.log('models/content-api', 'fetching', uuid);
 
-		statsd.increment('ingest.consumer.models.content-api.fetch.request', 1);
+		metrics.count('pipeline.transforms.contentApi.fetch.request', 1);
 
 		fetch('http://api.ft.com/content/' + uuid, {
 				timeout: 2000,
@@ -39,7 +41,7 @@ module.exports = function (event) {
 			.then(res => {
 				
 				console.log('models/content-api', uuid, res.status);
-				statsd.increment('ingest.consumer.models.content-api.fetch.response.' + res.status, 1);
+				metrics.count('pipeline.transforms.contentApi.fetch.response.' + res.status, 1);
 				
 				if (res.status !== 200) {
 					resolve({});
@@ -58,7 +60,7 @@ module.exports = function (event) {
 			})
 			.catch((err) => {
 				console.log('models/content-api', article[0], 'error', err);
-				statsd.increment('ingest.consumer.models.content-api.error', 1);
+				metrics.count('pipeline.transforms.contentApi.error', 1);
 				resolve({});	// FIXME - could/should be a reject
 			})
 		
