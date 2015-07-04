@@ -43,6 +43,11 @@ EventModel.prototype.pluck = function (val) {
 	return this.ingest._bodyFlattened[val];
 }
 
+EventModel.prototype.received = function (val) {
+	return (this.ingest._asJson.time && this.ingest._asJson.time.received) ? 
+				new Date(this.ingest._asJson.time.received) : new Date();
+}
+
 EventModel.prototype.annotate = function (key, val) {
 	
 	if (!this.egest.annotations) {

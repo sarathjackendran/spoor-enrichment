@@ -102,5 +102,15 @@ describe('Event', () => {
 		});
 	
 	});
+	
+	describe('received', () => {
+	
+		it('Get the time the event was received', done => {
+			var e = new EventModel(rawSqs);
+			expect(e.received().toISOString()).to.equal('2015-06-16T16:24:00.795Z');
+			done();
+		});
+	
+	});
 
 });

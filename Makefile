@@ -1,3 +1,9 @@
+
+clean:
+	@echo "cleaning dist files"
+	 rm -Rf dist/*; \
+	 rm -Rf dist-tests/*
+
 compile:
 	 gulp compile
 
@@ -12,6 +18,8 @@ run: compile
 test: compile
 	@export SESSION_API_KEY=123; \
 	 export CAPI_API_KEY=`cat ~/.ftapi_v2`; \
+	 transform_session=1; \
+	 transform_capi=1; \
 	 gulp compile-tests; \
 	 mocha -R spec --recursive dist-tests/server;
 
