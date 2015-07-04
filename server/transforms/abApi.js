@@ -4,7 +4,7 @@ var fetch	= require('node-fetch');
 var metrics = require('next-metrics');
 
 var abSegments = (ab) => {
-	if (ab.headers.get('x-ft-ab')) {
+	if (ab && ab.headers && ab.headers.get('x-ft-ab')) {
 		var tests = ab.headers.get('x-ft-ab').split(',');
 		var abSegments = {};
 		tests.forEach(function (test) {

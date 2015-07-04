@@ -56,7 +56,6 @@ module.exports = function (event) {
 			} else {
 				return res.json()
 					.then(content => {
-						console.log('models/content-api', '*************', content, res.json());
 						return {
 							uuid: uuid,
 							title: content.title,

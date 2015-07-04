@@ -77,7 +77,7 @@ module.exports = stream => {
 						transforms.abApi(event)
 					])
 					.then(all => {
-						var [user, content] = all;
+						var [user, content, ab] = all;
 						event.annotate('user', user);
 						event.annotate('content', content);
 						event.annotate('ab', ab);
