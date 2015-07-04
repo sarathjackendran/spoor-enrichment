@@ -44,6 +44,7 @@ describe('Content API', function() {
 		})
 		contentApi(e)
 			.then(function (content) {
+				console.log('****************', content);
 				expect(content.uuid).to.equal('06d28cd0-055b-11e5-bb7d-00144feabdc0');
 				expect(content.title).to.equal('Osborne bids to bring voters onside with pre-poll Budget');
 				expect(content.publishedDate).to.equal('2015-03-17T19:43:46.000Z');

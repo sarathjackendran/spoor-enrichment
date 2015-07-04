@@ -44,7 +44,7 @@ module.exports = function (event) {
 				if (res.status === 200) {
 					return res.json();
 				} else {
-					Promise.resolve({});
+					return { };	
 				}
 			})
 			.then((content) => {

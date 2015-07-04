@@ -52,19 +52,19 @@ module.exports = function (event) {
 			metrics.count('pipeline.transforms.contentApi.fetch.response.' + res.status, 1);
 			if (res.status !== 200) {
 				console.log('models/content-api', 'status was not a 200', res.status);
-				Promise.resolve({});
+				return { }
 			} else {
-				return res.json();
+				return res.json()
+					.then(content => {
+						console.log('models/content-api', '*************', content, res.json());
+						return {
+							uuid: uuid,
+							title: content.title,
+							publishedDate: content.publishedDate,
+							age: (new Date() - new Date(content.publishedDate)) / 1000
+						};
+					})
 			}
-		})
-		.then(content => {
-			console.log('models/content-api', uuid, content.title);
-			return {
-				uuid: uuid,
-				title: content.title,
-				publishedDate: content.publishedDate,
-				age: (new Date() - new Date(content.publishedDate)) / 1000
-			};
 		})
 		.catch((err) => {
 			console.log('models/content-api', uuid, 'error', err);
