@@ -34,37 +34,26 @@ describe('AB segmentation API', function() {
 		abApi(e);
 	});
 
-	xit('Ignore messages with invalid cookies', done => {
-		this.mitm.on("request", function(req, res) {
-			res.statusCode = 404;	// Session API responds with 404 if the token is invalid
-			res.end('{}');
-		})	
-		sessionApi(e)
-			.then(function (user) {
-				expect(user.uuid).to.not.exist;
-				done();
-			});
-	});
-
-	it('Ignore messages with no session token', done => {
+	it('Ignore messages with no session token in cookie', done => {
 		abApi(new EventModel(rawSqs__no_session))
 			.then(function (ab) {
-				expect(ab).to.not.exist;
+				expect(ab).to.deep.equal({});
 				done();
 			})
-			.catch(err => console.log(err));
+			.catch(err => console.log(err))
 	});
-
-	xit('Ignore errors from the Session API', done => {
+	
+	it('Ignore errors from the Session API', done => {
 		this.mitm.on("request", function(req, res) {
 			res.statusCode = 503;
 			res.end('{}');
 		})	
-		sessionApi(e)
-			.then(function (user) {
-				expect(user.uuid).to.not.exist;
+		abApi(e)
+			.then(function (ab) {
+				expect(ab).to.deep.equal({});
 				done();
-			});
+			})
+			.catch(err => console.log(err))
 	});
 
 });
