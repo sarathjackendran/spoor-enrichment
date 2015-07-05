@@ -18,7 +18,12 @@ var abSegments = (ab) => {
 };
 
 module.exports = function (event) {
-		
+
+	if (process.env.transform__ab_benchmark && (Math.random() > 0.1)) {
+		console.log('transforms/ab-api', 'filtered message out while benchmarking');
+		return Promise.resolve({});
+	}
+
 	if (!process.env.transform_ab) {
 		console.log('transforms/ab-api', 'is switched off');
 		return Promise.resolve({});
@@ -39,7 +44,7 @@ module.exports = function (event) {
 		return Promise.resolve({});
 	};
 		
-	console.log('models/ab-api', 'fetching', session);
+	console.log('transforms/ab-api', 'fetching', session);
 	metrics.count('pipeline.transforms.abApi.fetch.request', 1);
 
 	return fetch('https://ft-next-ab.herokuapp.com/spoor', {
@@ -49,18 +54,18 @@ module.exports = function (event) {
 			}
 		})
 		.then(res => {
-			console.log('models/ab-api', session, res.status, res.headers.get('x-ft-ab'));
+			console.log('transforms/ab-api', session, res.status, res.headers.get('x-ft-ab'));
 			metrics.count('pipeline.transforms.abApi.fetch.response.' + res.status, 1);
 			if (res.status !== 200) {
-				console.log('models/ab-api', 'status was not a 200', res.status);
+				console.log('transforms/ab-api', 'status was not a 200', res.status);
 				return { } 
 			}
 			var tokens = abSegments(res);
-			console.log('models/ab-api', session, JSON.stringify(tokens));
+			console.log('transforms/ab-api', session, JSON.stringify(tokens));
 			return tokens;
 		})
 		.catch((err) => {
-			console.log('models/ab-api', 'error', err);
+			console.log('transforms/ab-api', 'error', err);
 			metrics.count('pipeline.transforms.abApi.error', 1);
 			return {};
 		})
