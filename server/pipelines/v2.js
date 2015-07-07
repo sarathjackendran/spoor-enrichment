@@ -17,6 +17,7 @@ emitter.on('enriched', sinks.sqs);
 require('es6-promise').polyfill();
 
 module.exports = stream => {
+	var start = process.hrtime();
 	stream
 		.pipe(es.map((data, next) => {
 			metrics.count('pipeline.v2.in', 1);
@@ -96,6 +97,8 @@ module.exports = stream => {
 		.pipe(es.map((event, next) => {
 			emitter.emit('enriched', event);
 			metrics.count('pipeline.v2.out', 1);
+			var end = process.hrtime(start);
+			console.info("execution time (hr): %ds %dms", end[0], end[1]/1000000, end);
 			next(null, event);
 		}))
 		.pipe(process.stdout)
