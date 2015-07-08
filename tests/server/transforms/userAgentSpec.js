@@ -11,6 +11,7 @@ var EventModel	= require('../../../dist/models').EventModel;
 
 var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
 var rawSqs__no_userAgent = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--no-user-agent', { encoding: 'utf8' }));
+var rawSqs__userAgent = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--user-agent', { encoding: 'utf8' }));
 
 describe('User agent', function () {
 
@@ -25,5 +26,11 @@ describe('User agent', function () {
 		expect(e.annotations().ua.browser.name).to.be.equal('IE');
 		done();
 	});
-	
+
+	it.only('Pluck the user-agent from message body if it exists', done => {
+		var e = userAgent(new EventModel(rawSqs__userAgent));
+		expect(e.annotations().ua.browser.name).to.be.equal('Chrome');
+		done();
+	});
+
 });
