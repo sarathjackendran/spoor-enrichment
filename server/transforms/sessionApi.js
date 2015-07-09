@@ -5,30 +5,34 @@ var metrics = require('next-metrics');
 require('es6-promise').polyfill();
 
 module.exports = function (event) {
-	
+
 	if (!process.env.transform_session) {
 		console.log('transforms/session-api', 'is switched off');
 		return Promise.resolve({});
 	}
-	
+
 		metrics.count('pipeline.transforms.sessionApi.count', 1);
-		var cookie = event.headers().cookie;
-		
-		if (!cookie) {
-			return Promise.resolve({});
+
+		var session = event.pluck('user.ft_session');
+		if (!session) {
+			var cookie = event.headers().cookie;
+
+			if (!cookie) {
+				return Promise.resolve({});
+			}
+			var match = cookie.match(/FTSESSION=([^;]+)/i);
+			session = (match) ? match[1] : undefined;
 		}
-		
-		var match = cookie.match(/FTSESSION=([^;]+)/i);
-		var session = (match) ? match[1] : undefined;
-		var user = {
-			sessionToken: session
-		};
 		if (!session) {
 			return Promise.resolve({});
 		};
-		
+
+		var user = {
+			sessionToken: session
+		};
+
 		console.log('transforms/session-api', 'session', session);
-		
+
 		metrics.count('pipeline.transforms.sessionApi.fetch.request', 1);
 
 		return fetch('https://sessionapi-glb.memb.ft.com/membership/sessions/' + session, {
