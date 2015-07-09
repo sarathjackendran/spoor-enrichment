@@ -27,7 +27,7 @@ describe('User agent', function () {
 		done();
 	});
 
-	it.only('Pluck the user-agent from message body if it exists', done => {
+	it('Pluck the user-agent from message body if it exists', done => {
 		var e = userAgent(new EventModel(rawSqs__userAgent));
 		expect(e.annotations().ua.browser.name).to.be.equal('Chrome');
 		done();
