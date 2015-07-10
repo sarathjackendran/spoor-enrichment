@@ -48,12 +48,17 @@ module.exports = function (event) {
 				if (res.status === 200) {
 					return res.json();
 				} else {
-					Promise.resolve({});
+					return {};
 				}
 			})
 			.then((content) => {
 				console.log('transforms/session-api', 'response', JSON.stringify(content));
 				console.log('transforms/session-api', 'uuid', content.uuid, user);
+				
+				if (!content && !content.uuid) {
+					return {};
+				}
+
 				user.uuid = content.uuid;
 				return user;
 			})
