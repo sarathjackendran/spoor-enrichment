@@ -5,6 +5,11 @@ var metrics = require('next-metrics');
 
 const isArticle = /([a-f0-9-]{36})/;
 
+var url2classification = (url) => {
+	var m = /cms\/s\/([\d]+)/.exec(url);
+	return (m) ? m[1] : m;
+}
+
 var pluckUuidFromHeaders = function (event) {
 	var r = (event.headers().referer) ? url.parse(event.headers().referer) : {};
 	if (!r.pathname) {
@@ -58,7 +63,7 @@ module.exports = function (event) {
 				return res.json()
 					.then(content => {
 						return {
-							classification: content.item.location.uri,
+							classification: url2classification(content.item.location.uri),
 							metadata: content.item.metadata
 						};
 					})
