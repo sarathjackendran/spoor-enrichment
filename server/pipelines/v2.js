@@ -74,12 +74,14 @@ module.exports = stream => {
 			if (process.env.pipeline_apis) { 
 				Promise.all([
 						transforms.sessionApi(event),
-						transforms.contentApi(event)
+						transforms.contentApi(event),
+						transforms.abApi(event)
 					])
 					.then(all => {
-						var [user, content] = all;
+						var [user, content, ab] = all;
 						event.annotate('user', user);
 						event.annotate('content', content);
+						event.annotate('ab', ab);
 						next(null, event);
 					})
 					.catch(err => {
