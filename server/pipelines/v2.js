@@ -95,9 +95,17 @@ module.exports = stream => {
 		.pipe(es.map((event, next) => {
 			emitter.emit('enriched', event);
 			metrics.count('pipeline.v2.out', 1);
+			
+			// timing
 			var end = process.hrtime(start);
 			console.info("execution time (hr): %ds %dms", end[0], end[1]/1000000, end);
+			
+			if (end[1]/1000000 > 500) {
+				metrics.count('pipeline.v2.execution_time.exceeded_500ms', 1);
+			}
+
 			next(null, event);
+
 		}))
 		.pipe(process.stdout)
 }
