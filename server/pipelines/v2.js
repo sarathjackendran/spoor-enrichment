@@ -75,12 +75,14 @@ module.exports = stream => {
 				Promise.all([
 						transforms.sessionApi(event),
 						transforms.contentApi(event),
+						transforms.contentApi_v1(event),
 						transforms.abApi(event)
 					])
 					.then(all => {
-						var [user, content, ab] = all;
+						var [user, content, content_v1, ab] = all;
 						event.annotate('user', user);
 						event.annotate('content', content);
+						event.annotate('content_v1', content_v1);
 						event.annotate('ab', ab);
 						next(null, event);
 					})
