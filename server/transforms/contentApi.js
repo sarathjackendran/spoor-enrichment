@@ -52,7 +52,7 @@ module.exports = function (event) {
 			metrics.count('pipeline.transforms.contentApi.fetch.response.' + res.status, 1);
 			if (res.status !== 200) {
 				console.log('models/content-api', 'status was not a 200', res.status);
-				Promise.resolve({});
+				return Promise.resolve({});
 			} else {
 				return res.json();
 			}
