@@ -104,6 +104,10 @@ module.exports = stream => {
 			var end = process.hrtime(start);
 			console.info("execution time (hr): %ds %dms", end[0], end[1]/1000000, end);
 			
+			if (end[1]/1000000 > 100) {
+				metrics.count('pipeline.v2.execution_time.exceeded_100ms', 1);
+			}
+			
 			if (end[1]/1000000 > 500) {
 				metrics.count('pipeline.v2.execution_time.exceeded_500ms', 1);
 			}
