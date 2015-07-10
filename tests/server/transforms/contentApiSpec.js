@@ -80,10 +80,11 @@ describe('Content API', function() {
 		})	
 		contentApi(e)
 			.then(function (res) {
+				console.log('--------', res);
 				expect(res).to.deep.equal({});
 				done();
 			})
-			.catch(err => console.log(err));
+			.catch(err => console.log('------------', err));
 	});
 	
 });
