@@ -58,8 +58,7 @@ module.exports = function (event) {
 				return res.json()
 					.then(content => {
 						return {
-							classification: content.item.location.uri,
-							metadata: content.item.metadata
+							classification: content.item.location.uri
 						};
 					})
 			}
