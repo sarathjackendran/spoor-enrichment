@@ -26,7 +26,7 @@ module.exports = function (message) {
 	// write to kinesis
 	kinesis.putRecord({
 		StreamName: 'spoor-egest-v3',
-		PartitionKey: "event",
+		PartitionKey: Math.random().toString(), // https://forums.aws.amazon.com/thread.jspa?threadID=173506
 		Data: message
 	}, function(err, data) {
 		if (err) { 
