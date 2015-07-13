@@ -5,9 +5,21 @@ var metrics = require('next-metrics');
 
 const isArticle = /([a-f0-9-]{36})/;
 
+var countWords = function (str) {
+	return (str) ? str.split(' ').length : 0;
+}
+
 var url2classification = (url) => {
 	var m = /cms\/s\/([\d]+)/.exec(url);
 	return (m) ? m[1] : m;
+}
+
+var genreFromMetadata = (metadata) => {
+	try {
+		return metadata.genre[0].term.name;
+	} catch (e) {
+		return false;
+	}
 }
 
 var pluckUuidFromHeaders = function (event) {
@@ -30,11 +42,6 @@ module.exports = function (event) {
 		return Promise.resolve({});
 	}
 	
-	if (Math.random() > 0.1) {
-		console.log('transforms/content-api-v1', 'filtered message out while benchmarking');
-		return Promise.resolve({});
-	}
-
 	metrics.count('pipeline.transforms.contentApi_v1.count', 1);
 
 	var uuid = event.pluck('context.content.uuid');
@@ -69,7 +76,13 @@ module.exports = function (event) {
 					.then(content => {
 						return {
 							classification: url2classification(content.item.location.uri),
-							metadata: content.item.metadata
+							uuid: content.item.id,
+							metadata: content.item.metadata,
+							title: content.item.title.title,
+							publishedDate: content.item.lifecycle.initialPublishDateTime,
+							age: (new Date() - new Date(content.item.lifecycle.initialPublishDateTime)) / 1000,
+							wordCount: countWords(content.item.body.body),
+							genre: genreFromMetadata(content.item.metadata)
 						};
 					})
 			}

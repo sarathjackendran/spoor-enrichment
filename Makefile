@@ -20,6 +20,7 @@ test: compile
 	 export CAPI_API_KEY=`cat ~/.ftapi_v2`; \
 	 transform_session=1; \
 	 transform_capi=1; \
+	 transform_capi_v1=1; \
 	 gulp compile-tests; \
 	 mocha -R spec --recursive dist-tests/server;
 
