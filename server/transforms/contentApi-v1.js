@@ -5,9 +5,21 @@ var metrics = require('next-metrics');
 
 const isArticle = /([a-f0-9-]{36})/;
 
+var countWords = function (str) {
+	return (str) ? str.split(' ').length : 0;
+}
+
 var url2classification = (url) => {
 	var m = /cms\/s\/([\d]+)/.exec(url);
 	return (m) ? m[1] : m;
+}
+
+var genreFromMetadata = (metadata) => {
+	try {
+		return metadata.genre[0].term.name;
+	} catch (e) {
+		return false;
+	}
 }
 
 var pluckUuidFromHeaders = function (event) {
@@ -68,7 +80,9 @@ module.exports = function (event) {
 							metadata: content.item.metadata,
 							title: content.item.title.title,
 							publishedDate: content.item.lifecycle.initialPublishDateTime,
-							age: (new Date() - new Date(content.item.lifecycle.initialPublishDateTime)) / 1000
+							age: (new Date() - new Date(content.item.lifecycle.initialPublishDateTime)) / 1000,
+							wordCount: countWords(content.item.body.body),
+							genre: genreFromMetadata(content.item.metadata)
 						};
 					})
 			}

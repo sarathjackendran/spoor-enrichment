@@ -51,6 +51,8 @@ describe('Content API v1', function() {
 				expect(content_v1.title).to.equal('Nigel Farage\’s pinstriped image belies modest City career');
 				expect(content_v1.age).to.match(/[\d.]+/);
 				expect(content_v1.publishedDate).to.equal('2015-02-06T15:05:52Z');
+				expect(content_v1.wordCount).to.equal(1053);
+				expect(content_v1.genre).to.equal('News');
 				done();
 			})
 			.catch(err => console.log(err));
