@@ -12,7 +12,9 @@ AWS.config.update({
 var kinesis = new AWS.Kinesis();
 
 module.exports = function (message) {
-	
+
+	console.log('kinesis', message);
+
 	if (!process.env.sink_kinesis) {
 		console.log('sinks/kinesis', 'Kinesis sink is turned off');
 		return;
@@ -23,7 +25,7 @@ module.exports = function (message) {
 
 	// write to kinesis
 	kinesis.putRecord({
-		StreamName: 'spoor-egest-v2',
+		StreamName: 'spoor-egest-v3',
 		PartitionKey: "event",
 		Data: message
 	}, function(err, data) {
