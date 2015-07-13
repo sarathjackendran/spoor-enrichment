@@ -31,7 +31,7 @@ module.exports = function (message) {
 			console.log('sinks/kinesis', err);
 			metrics.count('sinks.kinesis.error', 1);
 		} else {
-			console.log(data);
+			console.log('sinks/kinesis', data);
 			metrics.count('sinks.kinesis.ok', 1);
 		}
 	});
