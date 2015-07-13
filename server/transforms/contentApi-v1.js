@@ -30,11 +30,6 @@ module.exports = function (event) {
 		return Promise.resolve({});
 	}
 	
-	//if (Math.random() > 0.1) {
-	//	console.log('transforms/content-api-v1', 'filtered message out while benchmarking');
-	//	return Promise.resolve({});
-	//}
-
 	metrics.count('pipeline.transforms.contentApi_v1.count', 1);
 
 	var uuid = event.pluck('context.content.uuid');
@@ -69,7 +64,11 @@ module.exports = function (event) {
 					.then(content => {
 						return {
 							classification: url2classification(content.item.location.uri),
-							metadata: content.item.metadata
+							uuid: content.item.id,
+							metadata: content.item.metadata,
+							title: content.item.title.title,
+							publishedDate: content.item.lifecycle.initialPublishDateTime,
+							age: (new Date() - new Date(content.item.lifecycle.initialPublishDateTime)) / 1000
 						};
 					})
 			}
