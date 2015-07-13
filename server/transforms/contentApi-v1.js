@@ -30,10 +30,10 @@ module.exports = function (event) {
 		return Promise.resolve({});
 	}
 	
-	if (Math.random() > 0.1) {
-		console.log('transforms/content-api-v1', 'filtered message out while benchmarking');
-		return Promise.resolve({});
-	}
+	//if (Math.random() > 0.1) {
+	//	console.log('transforms/content-api-v1', 'filtered message out while benchmarking');
+	//	return Promise.resolve({});
+	//}
 
 	metrics.count('pipeline.transforms.contentApi_v1.count', 1);
 
