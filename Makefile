@@ -27,3 +27,5 @@ test: compile
 deploy: compile
 	@haikro build deploy --app spoor-sqs-consumer-v002 --heroku-token=`heroku auth:token` --commit `git rev-parse HEAD`
 
+web: compile
+	 @nodemon dist/app.js
