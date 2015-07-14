@@ -1,4 +1,11 @@
 html
+	head
+		style.
+			table { width: 100%; }
+			td:first-child { width: 50px; }
+			td:nth-child(2) { width: 20%; }
+			.status-false { color: red; }
+			.status-true { color: green; }
 	body
 		p Spoor enrichment pipeline status
 		
@@ -7,30 +14,34 @@ html
 		table
 			each pipe in pipeline
 				tr
-					td= pipe.flag
 					td(class='status-'+pipe.status)= pipe.status
+					td= pipe.flag
+					td= pipe.description 
 		
 		h2 Filters
 		p Each event can be filtered out for a number of reasons.
 		table
 			each filter in filters
 				tr
-					td= filter.flag
 					td(class='status-'+filter.status)= filter.status
+					td= filter.flag
+					td= filter.description 
 		
 		h2 Transforms 
 		p Each event is enriched by a pipeline of transformations. 
 		table
 			each transform in transforms
 				tr
-					td= transform.flag
 					td(class='status-'+transform.status)= transform.status
-		
+					td= transform.flag
+					td= transform.description 
 		
 		h2 Sinks 
 		p Each event is pushed to a destination (known as a sink - as in 'sink hole').
 		table
 			each sink in sinks
 				tr
-					td= sink.flag
 					td(class='status-'+sink.status)= sink.status
+					td= sink.flag
+					td= sink.description 
+

@@ -29,42 +29,42 @@ module.exports = stream => {
 			next(null, event);
 		}))
 		.pipe(es.map((event, next) => {
-			if (process.env.pipeline_model) { 
+			if (process.env.filter_validate) { 
 				next(null, filters.isValidSource(event));
 			} else {
 				next(null, event);	
 			}
 		}))
 		.pipe(es.map((event, next) => {
-			if (process.env.pipeline_geo) { 
+			if (process.env.transform_geo) { 
 				next(null, transforms.geo(event));
 			} else {
 				next(null, event);	
 			}
 		}))
 		.pipe(es.map((event, next) => {
-			if (process.env.pipeline_time) { 
+			if (process.env.transform_time) { 
 				next(null, transforms.time(event));
 			} else {
 				next(null, event);	
 			}
 		}))
 		.pipe(es.map((event, next) => {
-			if (process.env.pipeline_ua) { 
+			if (process.env.transform_ua) { 
 				next(null, transforms.userAgent(event));
 			} else {
 				next(null, event);	
 			}
 		}))
 		.pipe(es.map((event, next) => {
-			if (process.env.pipeline_ingest) { 
+			if (process.env.transform_ingest) { 
 				next(null, transforms.ingestQueueMetadata(event));
 			} else {
 				next(null, event);	
 			}
 		}))
 		.pipe(es.map((event, next) => {
-			if (process.env.pipeline_url) { 
+			if (process.env.transform_url) { 
 				next(null, transforms.url(event));
 			} else {
 				next(null, event);	
