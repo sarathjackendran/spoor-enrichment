@@ -72,12 +72,21 @@ module.exports = stream => {
 		}))
 		.pipe(es.map((event, next) => {
 			if (process.env.pipeline_apis) { 
-				Promise.all([
+				
+				var t = [
 						transforms.sessionApi(event),
 						transforms.contentApi(event),
 						transforms.contentApi_v1(event),
 						transforms.abApi(event)
-					])
+				];
+
+				Promise
+					.all(t.map(function (p) {	// allow rejections in individual promises without failing  
+						return p.catch(function (err) {
+							console.log('error', err);
+							return undefined;
+						});
+					}))
 					.then(all => {
 						var [user, content, content_v1, ab] = all;
 						event.annotate('user', user);
