@@ -17,10 +17,18 @@ module.exports = function (event) {
 	}
 
 	var time = {
+		iso: {
+			day: actualTime.toJSON().slice(0, 10) + 'T00:00:00Z',
+			hour: actualTime.toJSON().slice(0, 14) + '00:00Z',
+			now: actualTime.toJSON(),
+		},
+		dayOfWeek: moment(actualTime).format('d'),
+		dayInWords: moment(actualTime).format('dddd'),
+		dayOfYear: moment(actualTime).format('DDD'),
+		month: moment(actualTime).format('M'),
+		monthInWords: moment(actualTime).format('MMMM'),
+		year: moment(actualTime).format('YYYY'),
 		weekday: !/^0|6$/.test(actualTime.getDay()),
-		day: actualTime.toJSON().slice(0, 10) + 'T00:00:00Z',
-		hour: actualTime.toJSON().slice(0, 14) + '00:00Z',
-		now: actualTime.toJSON(),
 		week: moment(actualTime).format('YYYYw'),
 		offset: offset
 	}
