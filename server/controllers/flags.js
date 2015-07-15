@@ -6,6 +6,11 @@ module.exports = (req, res) => {
 		
 		pipeline: [
 			{
+				flag: 'pipeline',
+				status: !!process.env.pipeline,
+				description: 'Send the incoming data from ingest down the pipeline. i.e. process the data'
+			},
+			{
 				flag: 'use_domains',
 				status: !!process.env.use_domains,
 				description: 'The pipeline uses node domains to catch errors.'
@@ -23,6 +28,11 @@ module.exports = (req, res) => {
 				flag: 'transform_geo',
 				status: !!process.env.transform_geo,
 				description: 'Annotates the event with geo-location data from MaxMind.'
+			},
+			{
+				flag: 'transform_time',
+				status: !!process.env.transform_ua,
+				description: 'Annotates the event with various timings about the event (weekday, day of the week etc.).'
 			},
 			{
 				flag: 'transform_ua',
