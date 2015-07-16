@@ -8,7 +8,12 @@ module.exports = function (event) {
 	var hasSource	= !!event.pluck('system.source');
 
 	var isValid = hasCategory && hasAction && hasSource;
-	
+
+	if (hasSource) {
+		var source = event.pluck('system.source');
+		metrics.count('pipeline.source.' + source, 1);
+	}
+
 	if (isValid) {
 		metrics.count('pipeline.filters.isValidSource.isValid.true', 1);
 	} else {
