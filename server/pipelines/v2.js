@@ -36,6 +36,13 @@ module.exports = stream => {
 			}
 		}))
 		.pipe(es.map((event, next) => {
+			if (process.env.transform_cohort) { 
+				next(null, transforms.cohort(event));
+			} else {
+				next(null, event);	
+			}
+		}))
+		.pipe(es.map((event, next) => {
 			if (process.env.transform_geo) { 
 				next(null, transforms.geo(event));
 			} else {

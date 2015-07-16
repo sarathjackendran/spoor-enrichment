@@ -7,3 +7,4 @@ module.exports.contentApi			= require('./contentApi');
 module.exports.contentApi_v1		= require('./contentApi-v1');
 module.exports.abApi				= require('./abApi');
 module.exports.url					= require('./url');
+module.exports.cohort				= require('./cohort');
