@@ -17,11 +17,9 @@ module.exports = function (event) {
 	}
 
 	var time = {
-		iso: {
-			day: actualTime.toJSON().slice(0, 10) + 'T00:00:00Z',
-			hour: actualTime.toJSON().slice(0, 14) + '00:00Z',
-			now: actualTime.toJSON(),
-		},
+		day: actualTime.toJSON().slice(0, 10) + 'T00:00:00Z',
+		hour: actualTime.toJSON().slice(0, 14) + '00:00Z',
+		now: actualTime.toJSON(),
 		dayOfWeek: parseInt(moment(actualTime).format('d')),
 		dayInWords: moment(actualTime).format('dddd'),
 		dayOfYear: parseInt(moment(actualTime).format('DDD')),
