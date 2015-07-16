@@ -16,7 +16,7 @@ module.exports = function (event) {
 	metrics.count('pipeline.transforms.url.count', 1);
 
 	var referrer = event.pluck('context.referrer') || event.headers().referer;
-	var location = event.pluck('context.url');
+	var location = event.pluck('context.url') || event.headers().referer; // FIXME
 
 	event.annotate('referrer', tokenise(referrer));
 	event.annotate('url', tokenise(location));
