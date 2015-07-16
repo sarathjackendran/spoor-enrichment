@@ -23,14 +23,14 @@ describe('Time', function () {
 	it('Flag if the event happened on a weekend', done => {
 		var ft = sinon.useFakeTimers(new Date('2015-3-1').getTime());
 		var t = time(e);
-		expect(e.annotations().time.weekday).to.equal(false);
+		expect(e.annotations().time.isWeekday).to.equal(false);
 		done();
 	});
 
 	it('Flag if the event happened on a weekday', done => {
 		var ft = sinon.useFakeTimers(new Date('2015-3-2').getTime());
 		var t = time(e);
-		expect(e.annotations().time.weekday).to.equal(true);
+		expect(e.annotations().time.isWeekday).to.equal(true);
 		done()
 	});
 
@@ -77,5 +77,17 @@ describe('Time', function () {
 		expect(offset.annotations().time.now).to.equal('2015-06-16T16:24:00.795Z');
 		done();
 	});
-
+	
+	it('Generate various time tokens', done => {
+		var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:12:01 UTC').getTime());
+		var t = time(e);
+		expect(e.annotations().time.dayOfWeek).to.equal(1);
+		expect(e.annotations().time.dayInWords).to.equal('Monday');
+		expect(e.annotations().time.dayOfYear).to.equal(166);
+		expect(e.annotations().time.date).to.equal(15);
+		expect(e.annotations().time.month).to.equal(6);
+		expect(e.annotations().time.monthInWords).to.equal('June');
+		expect(e.annotations().time.year).to.equal(2015);
+		done()
+	});
 });
