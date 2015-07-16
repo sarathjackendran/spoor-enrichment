@@ -27,7 +27,7 @@ describe('Cohort', function () {
 	it('Users with no products are anonymous', done => {
 		e = new EventModel(rawSqs__no_cohorts);
 		cohort(e);
-		expect(e.annotations().cohorts).to.deep.equal(['anonymous']);
+		expect(e.annotations().cohorts).to.deep.equal([]);
 		done()
 	});
 

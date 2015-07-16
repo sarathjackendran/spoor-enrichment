@@ -7,7 +7,7 @@ require('es6-promise').polyfill();
 
 module.exports = (event) => {
 
-	var cohort = ['anonymous'];
+	var cohort = [];
 
 	metrics.count('pipeline.transforms.cohort.count', 1);
 
