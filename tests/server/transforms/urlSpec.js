@@ -12,31 +12,39 @@ var EventModel	= require('../../../dist/models').EventModel;
 var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
 var rawSqs__url = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--url', { encoding: 'utf8' }));
 var rawSqs__no_referrer = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--no-referrer', { encoding: 'utf8' }));
+var rawSqs__referrer = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--referrer', { encoding: 'utf8' }));
 var e;
 
 describe('Location', function () {
-	
+
 	it('Extract the referrer information from the header', done => {
 		var e = new EventModel(rawSqs);
 		url(e);
-		expect(e.annotations().url.pathname).to.equal('/06d28cd0-055b-11e5-bb7d-00144feabdc0');
+		expect(e.annotations().referrer.pathname).to.equal('/06d28cd0-055b-11e5-bb7d-00144feabdc0');
 		done();
 	});
-	
+
+	it('Pluck the referrer information from the message body', done => {
+		var e = new EventModel(rawSqs__referrer);
+		url(e);
+		expect(e.annotations().referrer.pathname).to.equal('/christmas');
+		done();
+	});
+
 	it('Ignore missing referrers', done => {
 		var e = new EventModel(rawSqs__no_referrer);
 		url(e);
-		expect(e.annotations().url).to.not.be.defined;
+		expect(e.annotations().referrer).to.not.be.defined;
 		done();
 	});
-	
+
 	it('Extract the location information from the message body', done => {
 		var e = new EventModel(rawSqs__url);
 		url(e);
 		expect(e.annotations().url.pathname).to.equal('/search');
 		done();
 	});
-	
+
 	it('Extract the querystring paramters from the url', done => {
 		var e = new EventModel(rawSqs__url);
 		url(e);
