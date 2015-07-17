@@ -13,7 +13,7 @@ run: compile
 	 export SQS_INGEST=`cat ~/.aws-sqs.spoor-v2`; \
 	 export CAPI_API_KEY=`cat ~/.ftapi_v2`; \
 	 export SESSION_API_KEY=`cat ~/.session-api`; \
-	 node dist/stream.js
+	 node dist/v3.js
 
 test: compile
 	@export SESSION_API_KEY=123; \

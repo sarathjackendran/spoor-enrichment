@@ -1,7 +1,6 @@
 
 var es				= require('event-stream');
 
-var sinks			= require('../sinks');
 var filter			= require('../filters');
 var transform		= require('../transforms');
 var EventModel		= require('../models').EventModel;
@@ -10,21 +9,9 @@ var metrics			= require('next-metrics')
 var EventEmitter	= require('events').EventEmitter;
 const emitter = new EventEmitter();
 
-emitter.on('enriched', sinks.kinesis);	// externalise in v3
-emitter.on('enriched', sinks.sqs);
-		
-/* FIXME add these as event listeners too 	
-			if (end[1]/1000000 > 100) {
-				metrics.count('pipeline.v2.execution_time.exceeded_100ms', 1);
-			}
-			
-			if (end[1]/1000000 > 500) {
-				metrics.count('pipeline.v2.execution_time.exceeded_500ms', 1);
-			}
-*/
-
 var Pipeline = () => {} 
 
+/* FIXME maybe just export normal event listener */
 Pipeline.prototype.on = (fn) => { emitter.on('enriched', fn) };
 
 Pipeline.prototype.process = (message) => {
@@ -81,7 +68,8 @@ Pipeline.prototype.process = (message) => {
 			execution_time: end,
 			execution_time_in_seconds: parseFloat(`${end[0]}.${end[1]/1000000}`)
 		});
-		
+
+		// all done		
 		metrics.count('pipeline.v2.out', 1);
 		emitter.emit('enriched', event);
 	})	

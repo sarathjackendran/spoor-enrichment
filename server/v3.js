@@ -1,8 +1,9 @@
 // `npm install rx randomstring es6-promise gulp babel gulp-babel` ; make run 
 
 var AWS				= require('aws-sdk'); 
-var pipelines		= require('./pipelines');
+var Pipeline		= require('./pipelines').v3;
 var metrics			= require('next-metrics')
+var sinks			= require('./sinks');
 
 metrics.init({ app: 'spoor-enrichment', flushEvery: 30000 });
 
@@ -18,6 +19,14 @@ var sqs = new AWS.SQS();
 var sqsUrlIngest = process.env.SQS_INGEST;
 
 var isProduction = process.env.NODE_ENV === 'production';
+
+var pipeline = new Pipeline();
+
+pipeline.on(sinks.kinesis);
+pipeline.on(sinks.sqs);
+pipeline.on(event => {
+	console.log('Timing:', event.egest.annotations.pipeline);
+});
 
 var sqsStream = () => {
 	
@@ -51,7 +60,7 @@ var sqsStream = () => {
 
 						if (process.env.pipeline) {
 							var message = data.Messages[0];
-							pipelines.promiseOfEnrichment(message)
+							pipeline.process(message)
 								.then(function () {
 				
 									if (!isProduction) {
