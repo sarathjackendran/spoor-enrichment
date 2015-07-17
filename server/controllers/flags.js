@@ -9,11 +9,6 @@ module.exports = (req, res) => {
 				flag: 'pipeline',
 				status: !!process.env.pipeline,
 				description: 'Send the incoming data from ingest down the pipeline. i.e. process the data'
-			},
-			{
-				flag: 'use_domains',
-				status: !!process.env.use_domains,
-				description: 'The pipeline uses node domains to catch errors.'
 			}
 		],
 		filters: [
@@ -48,11 +43,6 @@ module.exports = (req, res) => {
 				flag: 'transform_url',
 				status: !!process.env.transform_url,
 				description: 'Annotates the event with a tokenised location and referrer information.'
-			},
-			{
-				flag: 'transform_apis',
-				status: !!process.env.transform_apis,
-				description: 'Allows the event to be annotated by various APIs. Essentially a master flag for API annotation.'
 			},
 			{
 				flag: 'transform_ab',

@@ -4,6 +4,10 @@ var metrics		= require('next-metrics')
 module.exports = (event) => {
 	
 	return new Promise((resolve, reject) => {
+		
+		if (!process.env.filter_validate) {
+			resolve({});
+		}
 	
 		var hasCategory = !!event.pluck('category');
 		var hasAction	= !!event.pluck('action');
