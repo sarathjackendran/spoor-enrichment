@@ -25,7 +25,7 @@ module.exports = function (message) {
 	kinesis.putRecord({
 		StreamName: 'spoor-egest-v3',
 		PartitionKey: Math.random().toString(), // https://forums.aws.amazon.com/thread.jspa?threadID=173506
-		Data: message
+		Data: JSON.stringify(message)
 	}, function(err, data) {
 		if (err) { 
 			console.log('sinks/kinesis', err);

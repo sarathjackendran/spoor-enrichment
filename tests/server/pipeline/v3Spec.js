@@ -12,6 +12,9 @@ var e, g;
 
 describe('Pipeline', function () {
 
+		
+	// FIXME - this needs some work!
+	
 	it('Time each message', done => {
 		
 		var spy = sinon.spy();
