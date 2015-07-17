@@ -31,7 +31,8 @@ Pipeline.prototype.process = (message) => {
 	})
 	.then(annotations => {
 		var [event, isValid] = annotations;
-		return Promise.all([
+			
+		var transforms = [
 			Promise.resolve(event),
 			Promise.resolve(isValid),
 			transform.geo(event),
@@ -43,14 +44,19 @@ Pipeline.prototype.process = (message) => {
 			transform.contentApi(event),
 			transform.contentApi_v1(event),
 			transform.abApi(event)
-		]);
+		];
 
-		// TODO - allow promises to fail
+		return Promise.all(transforms.map(function (p) {	// allow rejections in individual promises without failing  
+			return p.catch(function (err) {
+				console.log('error', err);
+				return undefined;
+			});
+		}))	
 	})
 	.then(annotations => {
 		
 		var [event, isValid, geo, cohort, ingest, time, ua, session, capi2, capi1, ab] = annotations;
-		
+
 		// calculate the end time in nano-seconds
 		var end = process.hrtime(start);
 		
@@ -75,6 +81,7 @@ Pipeline.prototype.process = (message) => {
 	})	
 	.catch(error => { 
 		console.log('pipeline error', error);
+		metrics.count('pipeline.v2.error', 1);
 	});
 
 }
