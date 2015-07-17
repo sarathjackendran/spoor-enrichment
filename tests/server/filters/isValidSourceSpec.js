@@ -16,15 +16,17 @@ describe('Source validation', function () {
 	
 	it('Mark messages without action, category, source as invalid', done => {
 		var e = new EventModel(rawSqs);
-		isValidSource(e);
-		expect(e.annotations().validation.isValid).to.be.false;
+		isValidSource(e).then(event => {
+			expect(event.isValid).to.be.false;
+		});
 		done();
 	});
 	
 	it('Must specify the action, category, source of an event', done => {
 		var e = new EventModel(rawSqs__valid_message);
-		isValidSource(e);
-		expect(e.annotations().validation.isValid).to.be.true;
+		isValidSource(e).then(event => {
+			expect(event.isValid).to.be.true;
+		});
 		done();
 	});
 

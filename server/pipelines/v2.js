@@ -14,8 +14,6 @@ const emitter = new EventEmitter();
 emitter.on('enriched', sinks.kinesis);
 emitter.on('enriched', sinks.sqs);
 
-require('es6-promise').polyfill();
-
 module.exports = stream => {
 	var start = process.hrtime();
 	stream
@@ -31,6 +29,13 @@ module.exports = stream => {
 		.pipe(es.map((event, next) => {
 			if (process.env.filter_validate) { 
 				next(null, filters.isValidSource(event));
+			} else {
+				next(null, event);	
+			}
+		}))
+		.pipe(es.map((event, next) => {
+			if (process.env.transform_cohort) { 
+				next(null, transforms.cohort(event));
 			} else {
 				next(null, event);	
 			}

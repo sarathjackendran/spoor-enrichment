@@ -9,11 +9,6 @@ module.exports = (req, res) => {
 				flag: 'pipeline',
 				status: !!process.env.pipeline,
 				description: 'Send the incoming data from ingest down the pipeline. i.e. process the data'
-			},
-			{
-				flag: 'use_domains',
-				status: !!process.env.use_domains,
-				description: 'The pipeline uses node domains to catch errors.'
 			}
 		],
 		filters: [
@@ -50,11 +45,6 @@ module.exports = (req, res) => {
 				description: 'Annotates the event with a tokenised location and referrer information.'
 			},
 			{
-				flag: 'transform_apis',
-				status: !!process.env.transform_apis,
-				description: 'Allows the event to be annotated by various APIs. Essentially a master flag for API annotation.'
-			},
-			{
 				flag: 'transform_ab',
 				status: !!process.env.transform_ab,
 				description: 'Annotates the event with AB test segmentation data (next.ft.com only).'
@@ -73,6 +63,11 @@ module.exports = (req, res) => {
 				flag: 'transform_session',
 				status: !!process.env.transform_session,
 				description: 'Validates the event\'s FT session token with the Session API and returns the user\'s UUID.'
+			},
+			{
+				flag: 'transform_cohort',
+				status: !!process.env.transform_cohort,
+				description: 'Annotates the event with the FT cohort data (Eg, registered, subscriber etc.)'
 			}
 		],
 		sinks: [

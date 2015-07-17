@@ -12,14 +12,22 @@ var tokenise = function(location) {
 }
 
 module.exports = function (event) {
+	
+	return new Promise((resolve, reject) => {
+		
+		if (!process.env.transform_url) {
+			resolve({});
+		}
 
-	metrics.count('pipeline.transforms.url.count', 1);
+		metrics.count('pipeline.transforms.url.count', 1);
 
-	var referrer = event.pluck('context.referrer') || event.headers().referer;
-	var location = event.pluck('context.url');
-
-	event.annotate('referrer', tokenise(referrer));
-	event.annotate('url', tokenise(location));
-
-	return event;
+		var referrer = event.pluck('context.referrer') || event.headers().referer;
+		var location = event.pluck('context.url') || event.headers().referer; // FIXME
+		
+		resolve({
+			referrer: tokenise(referrer),
+			location: tokenise(location)
+		});
+	
+	});
 }

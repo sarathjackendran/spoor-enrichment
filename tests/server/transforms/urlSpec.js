@@ -19,38 +19,43 @@ describe('Location', function () {
 
 	it('Extract the referrer information from the header', done => {
 		var e = new EventModel(rawSqs);
-		url(e);
-		expect(e.annotations().referrer.pathname).to.equal('/06d28cd0-055b-11e5-bb7d-00144feabdc0');
-		done();
+		url(e).then(u => {
+			expect(u.referrer.pathname).to.equal('/06d28cd0-055b-11e5-bb7d-00144feabdc0');
+			done();
+		})
 	});
 
 	it('Pluck the referrer information from the message body', done => {
 		var e = new EventModel(rawSqs__referrer);
-		url(e);
-		expect(e.annotations().referrer.pathname).to.equal('/christmas');
-		done();
+		url(e).then(u => {
+			expect(u.referrer.pathname).to.equal('/christmas');
+			done();
+		});
 	});
 
 	it('Ignore missing referrers', done => {
 		var e = new EventModel(rawSqs__no_referrer);
-		url(e);
-		expect(e.annotations().referrer).to.not.be.defined;
-		done();
+		url(e).then(u => {
+			expect(u.referrer).to.not.be.defined;
+			done();
+		});
 	});
 
 	it('Extract the location information from the message body', done => {
 		var e = new EventModel(rawSqs__url);
-		url(e);
-		expect(e.annotations().url.pathname).to.equal('/search');
-		done();
+		url(e).then(u => {
+			expect(u.location.pathname).to.equal('/search');
+			done();
+		});
 	});
 
 	it('Extract the querystring paramters from the url', done => {
 		var e = new EventModel(rawSqs__url);
-		url(e);
-		expect(e.annotations().url.querystring.q).to.equal('sausages');
-		expect(e.annotations().url.querystring.page).to.equal('2');
-		done();
+		url(e).then(u => {
+			expect(u.location.querystring.q).to.equal('sausages');
+			expect(u.location.querystring.page).to.equal('2');
+			done();
+		});
 	});
 
 });
