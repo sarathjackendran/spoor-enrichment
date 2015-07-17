@@ -4,15 +4,20 @@ var metrics		= require('next-metrics');
 
 module.exports = function (event) {
 
-	metrics.count('pipeline.transforms.userAgent.count', 1);
+	return new Promise((resolve, reject) => {
+		metrics.count('pipeline.transforms.userAgent.count', 1);
 
-	var headers = event.headers();
+		var headers = event.headers();
 
-	var ua = event.pluck('device.user_agent') || headers['user-agent'];
-	if (!ua) return event;
+		var ua = event.pluck('device.user_agent') || headers['user-agent'];
+		if (!ua) {
+			resolve({});
+		}
 
-	var parser = new UAParser();
-	parser.setUA(ua);
-	event.annotate('ua', parser.getResult());
-	return event;
+		var parser = new UAParser();
+		parser.setUA(ua);
+		
+		resolve(parser.getResult());
+	});
+
 }

@@ -3,20 +3,19 @@ var es				= require('event-stream');
 
 var sinks			= require('../sinks');
 var filter			= require('../filters');
-var transforms		= require('../transforms');
+var transform		= require('../transforms');
 var EventModel		= require('../models').EventModel;
 var metrics			= require('next-metrics')
 
 var EventEmitter	= require('events').EventEmitter;
-
 const emitter = new EventEmitter();
 
-emitter.on('enriched', sinks.kinesis);
+emitter.on('enriched', sinks.kinesis);	// externalise in v3
 emitter.on('enriched', sinks.sqs);
 
-require('es6-promise').polyfill();
-
 var Pipeline = () => {} 
+
+Pipeline.prototype.on = (fn) => { emitter.on('enriched', fn) };
 
 Pipeline.prototype.process = (message) => {
 		
@@ -26,15 +25,44 @@ Pipeline.prototype.process = (message) => {
 	
 	return new Promise((resolve, reject) => {
 		resolve(new EventModel(message));
-	}).then(event => {
-		
+	})
+	.then(event => {
 		return Promise.all([
+			Promise.resolve(event),
 			filter.isValidSource(event)
 		]);
-
 	})
 	.then(annotations => {
-		emitter.emit('enriched', annotations);
+		var [event, isValid] = annotations;
+		return Promise.all([
+			Promise.resolve(event),
+			Promise.resolve(isValid),
+			transform.geo(event),
+			transform.cohort(event),
+			transform.ingestQueueMetadata(event),
+			transform.time(event),
+			transform.userAgent(event)
+		]);
+	})
+	.then(annotations => {
+		
+		var [event, isValid, geo, cohort, ingest, time, ua] = annotations;
+		
+		// calculate the end time in nano-seconds
+		var end = process.hrtime(start);
+		
+		event.annotate('geo', geo);
+		event.annotate('cohort', cohort);
+		event.annotate('isValid', isValid);
+		event.annotate('ingestQueueMetadata', ingest);
+		event.annotate('time', time);
+		event.annotate('ua', ua);
+		
+		event.annotate('pipeline', {
+			execution_time: end,
+			execution_time_in_seconds: parseFloat(`${end[0]}.${end[1]/1000000}`)
+		});
+		emitter.emit('enriched', event);
 	})	
 	.catch(error => { 
 		console.log('pipeline error', error);
@@ -42,7 +70,6 @@ Pipeline.prototype.process = (message) => {
 
 }
 
-Pipeline.prototype.on = emitter.on;
 
 module.exports = Pipeline;
 

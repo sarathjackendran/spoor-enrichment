@@ -10,24 +10,23 @@ var EventModel	= require('../../../dist/models').EventModel;
 
 var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
 var rawSqs__no_cohorts = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest--no-cohorts', { encoding: 'utf8' }));
-var e, g;
+var e;
 
 describe('Cohort', function () {
 
-	beforeEach(() => {
-	});
-
 	it('Determine cohort from the HTTP Cookie', done => {
 		e = new EventModel(rawSqs);
-		cohort(e);
-		expect(e.annotations().cohorts).to.deep.equal(['subscriber', 'registered']);
+		cohort(e).then(cohorts => {
+			expect(cohorts).to.deep.equal(['subscriber', 'registered']);
+		});
 		done()
 	});
 	
 	it('Users with no products are anonymous', done => {
 		e = new EventModel(rawSqs__no_cohorts);
-		cohort(e);
-		expect(e.annotations().cohorts).to.deep.equal([]);
+		cohort(e).then(cohorts => {
+			expect(cohorts).to.deep.equal([]);
+		});
 		done()
 	});
 

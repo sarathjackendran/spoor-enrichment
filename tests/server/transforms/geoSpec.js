@@ -9,19 +9,20 @@ var geo         = require('../../../dist/transforms').geo;
 var EventModel	= require('../../../dist/models').EventModel;
 
 var rawSqs = JSON.parse(fs.readFileSync('./tests/server/fixtures/ingest', { encoding: 'utf8' }));
-var e, g;
+var e;
 
-describe('Geo', function () {
+describe('Geo', () => {
 
 	beforeEach(() => {
 		e = new EventModel(rawSqs);
-		g = geo(e);
 	});
 
 	it('Determine country from the HTTP headers', done => {
-		expect(e.annotations().geo.country).to.equal('GB');
-		expect(e.annotations().geo.ftRegion).to.equal('uk');
-		done()
+		geo(e).then(geo => {
+			expect(geo.country).to.equal('GB');
+			expect(geo.ftRegion).to.equal('uk');
+			done();
+		});
 	});
 
 });

@@ -12,25 +12,34 @@ var e, g;
 
 describe('Pipeline', function () {
 
-	it.only('Process a message', done => {
+	it('Time each message', done => {
 		
 		var spy = sinon.spy();
 		var pipeline = new Pipeline();
-		
-		console.log(pipeline.on);
+		pipeline.on(spy);
 
-		pipeline.on('enriched', spy);
-
-		pipeline
+		return pipeline
 			.process(message)
 			.then(event => {
-				console.log(event, spy);
-				expect(true).to.equal(true);
+				expect(spy.lastCall.args[0].egest.annotations.pipeline.execution_time[1]).to.match(/^[\d]+$/);
+				done();
 			})
-			.catch(error => {
-				console.log('** ERROR **', error);
-			});
-		done()
+		
+	})
+
+	it('Process a message', done => {
+		
+		var spy = sinon.spy();
+		var pipeline = new Pipeline();
+		pipeline.on(spy);
+
+		return pipeline
+			.process(message)
+			.then(event => {
+				console.log(spy.lastCall.args[0]);
+				expect(spy.callCount).to.equal(1);
+				done();
+			})
 	});
 
 });

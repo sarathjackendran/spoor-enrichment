@@ -17,20 +17,26 @@ describe('User agent', function () {
 
 	it('Ignore messages with no user-agent header', done => {
 		var e = userAgent(new EventModel(rawSqs__no_userAgent));
-		expect(e.annotations()).to.not.exist;
-		done();
+		e.then(ua => {
+			expect(ua).to.deep.equal({});
+			done();
+		})
 	});
 
 	it('Tokenise the user-agent header', done => {
 		var e = userAgent(new EventModel(rawSqs));
-		expect(e.annotations().ua.browser.name).to.be.equal('IE');
-		done();
+		e.then(ua => {
+			expect(ua.browser.name).to.be.equal('IE');
+			done();
+		});	
 	});
 
 	it('Pluck the user-agent from message body if it exists', done => {
 		var e = userAgent(new EventModel(rawSqs__userAgent));
-		expect(e.annotations().ua.browser.name).to.be.equal('Chrome');
-		done();
+		e.then(ua => {
+			expect(ua.browser.name).to.be.equal('Chrome');
+			done();
+		});	
 	});
 
 });
