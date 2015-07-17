@@ -23,7 +23,7 @@ module.exports = function (message) {
 	metrics.count('sinks.sqs.count', 1);
 
 	sqs.sendMessage({
-		QueueUrl: sqsUrlEgest, MessageBody: message
+		QueueUrl: sqsUrlEgest, MessageBody: JSON.stringify(message)
 	}, function(err, data) {
 		if (err) { 
 			console.log('sinks/sqs', err);
