@@ -14,8 +14,6 @@ const emitter = new EventEmitter();
 emitter.on('enriched', sinks.kinesis);
 emitter.on('enriched', sinks.sqs);
 
-require('es6-promise').polyfill();
-
 module.exports = stream => {
 	var start = process.hrtime();
 	stream

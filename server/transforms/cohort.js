@@ -3,8 +3,6 @@ var fetch	= require('node-fetch');
 var metrics = require('next-metrics');
 var cohorts = require('../utils/ft-cohorts');
 
-require('es6-promise').polyfill();
-
 module.exports = (event) => {
 	
 	return new Promise((resolve, reject) => {

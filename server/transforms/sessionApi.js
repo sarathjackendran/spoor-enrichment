@@ -2,8 +2,6 @@
 var fetch	= require('node-fetch');
 var metrics = require('next-metrics');
 
-require('es6-promise').polyfill();
-
 module.exports = function (event) {
 
 	if (!process.env.transform_session) {
