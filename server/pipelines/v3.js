@@ -18,7 +18,7 @@ Pipeline.prototype.process = (message) => {
 		
 	var start = process.hrtime();
 			
-	metrics.count('pipeline.v2.in', 1);
+	metrics.count('pipeline.in', 1);
 	
 	return new Promise((resolve, reject) => {
 		resolve(new EventModel(message));
@@ -70,7 +70,7 @@ Pipeline.prototype.process = (message) => {
 		});
 
 		// all done		
-		metrics.count('pipeline.v2.out', 1);
+		metrics.count('pipeline.out', 1);
 		emitter.emit('enriched', event);
 	})	
 	.catch(error => { 

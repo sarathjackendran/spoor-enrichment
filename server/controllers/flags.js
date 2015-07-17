@@ -73,6 +73,11 @@ module.exports = (req, res) => {
 				flag: 'transform_session',
 				status: !!process.env.transform_session,
 				description: 'Validates the event\'s FT session token with the Session API and returns the user\'s UUID.'
+			},
+			{
+				flag: 'transform_cohort',
+				status: !!process.env.transform_cohort,
+				description: 'Annotates the event with the FT cohort data (Eg, registered, subscriber etc.)'
 			}
 		],
 		sinks: [

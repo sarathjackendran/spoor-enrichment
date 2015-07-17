@@ -14,6 +14,10 @@ var tokenise = function(location) {
 module.exports = function (event) {
 	
 	return new Promise((resolve, reject) => {
+		
+		if (!process.env.transform_url) {
+			resolve({});
+		}
 
 		metrics.count('pipeline.transforms.url.count', 1);
 

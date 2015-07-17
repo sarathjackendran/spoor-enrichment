@@ -5,7 +5,11 @@ var regions = require('../utils/ft-regions');
 module.exports = (event) => {
 	
 	return new Promise((resolve, reject) => {
-		
+
+		if (!process.env.transform_geo) {
+			resolve({});
+		}
+
 		metrics.count('pipeline.transforms.geo.count', 1);
 		
 		var headers = event.headers();

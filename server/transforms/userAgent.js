@@ -5,6 +5,11 @@ var metrics		= require('next-metrics');
 module.exports = function (event) {
 
 	return new Promise((resolve, reject) => {
+		
+		if (!process.env.transform_ua) {
+			resolve({});
+		}
+	
 		metrics.count('pipeline.transforms.userAgent.count', 1);
 
 		var headers = event.headers();

@@ -8,6 +8,10 @@ require('es6-promise').polyfill();
 module.exports = (event) => {
 	
 	return new Promise((resolve, reject) => {
+		
+		if (!process.env.transform_cohort) {
+			resolve({});
+		}
 
 		var cohort = [];
 		metrics.count('pipeline.transforms.cohort.count', 1);

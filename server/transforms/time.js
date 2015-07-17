@@ -6,6 +6,10 @@ module.exports = function (event) {
 
 	return new Promise((resolve, reject) => {
 		
+		if (!process.env.transform_time) {
+			resolve({});
+		}
+		
 		metrics.count('pipeline.transforms.time.count', 1);
 
 		// the actual time of the event
