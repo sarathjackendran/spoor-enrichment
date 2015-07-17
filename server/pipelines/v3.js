@@ -56,13 +56,13 @@ Pipeline.prototype.process = (message) => {
 		
 		event.annotate('geo', geo);
 		event.annotate('cohort', cohort);
-		event.annotate('isValid', isValid);
+		event.annotate('validation', isValid);
 		event.annotate('ingestQueueMetadata', ingest);
 		event.annotate('time', time);
 		event.annotate('ua', ua);
-		event.annotate('session', session);
-		event.annotate('capi2', capi2);
-		event.annotate('capi1', capi1);
+		event.annotate('user', session);
+		event.annotate('content', capi2);
+		event.annotate('content_v1', capi1);
 		event.annotate('ab', ab);
 		event.annotate('pipeline', {
 			execution_time: end,
