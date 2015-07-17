@@ -12,6 +12,16 @@ const emitter = new EventEmitter();
 
 emitter.on('enriched', sinks.kinesis);	// externalise in v3
 emitter.on('enriched', sinks.sqs);
+		
+/* FIXME add these as event listeners too 	
+			if (end[1]/1000000 > 100) {
+				metrics.count('pipeline.v2.execution_time.exceeded_100ms', 1);
+			}
+			
+			if (end[1]/1000000 > 500) {
+				metrics.count('pipeline.v2.execution_time.exceeded_500ms', 1);
+			}
+*/
 
 var Pipeline = () => {} 
 
@@ -41,12 +51,18 @@ Pipeline.prototype.process = (message) => {
 			transform.cohort(event),
 			transform.ingestQueueMetadata(event),
 			transform.time(event),
-			transform.userAgent(event)
+			transform.userAgent(event),
+			transform.sessionApi(event),
+			transform.contentApi(event),
+			transform.contentApi_v1(event),
+			transform.abApi(event)
 		]);
+
+		// TODO - allow promises to fail
 	})
 	.then(annotations => {
 		
-		var [event, isValid, geo, cohort, ingest, time, ua] = annotations;
+		var [event, isValid, geo, cohort, ingest, time, ua, session, capi2, capi1, ab] = annotations;
 		
 		// calculate the end time in nano-seconds
 		var end = process.hrtime(start);
@@ -57,11 +73,16 @@ Pipeline.prototype.process = (message) => {
 		event.annotate('ingestQueueMetadata', ingest);
 		event.annotate('time', time);
 		event.annotate('ua', ua);
-		
+		event.annotate('session', session);
+		event.annotate('capi2', capi2);
+		event.annotate('capi1', capi1);
+		event.annotate('ab', ab);
 		event.annotate('pipeline', {
 			execution_time: end,
 			execution_time_in_seconds: parseFloat(`${end[0]}.${end[1]/1000000}`)
 		});
+		
+		metrics.count('pipeline.v2.out', 1);
 		emitter.emit('enriched', event);
 	})	
 	.catch(error => { 
@@ -70,63 +91,4 @@ Pipeline.prototype.process = (message) => {
 
 }
 
-
 module.exports = Pipeline;
-
-	/*
-	.then(event => {
-		
-		var enrichments = [
-				transforms.time(event);
-				transforms.geo(event);
-				transforms.userAgent(event);
-				transforms.ingestQueueMetadata(event);
-				transforms.url(event);
-				transforms.sessionApi(event),
-				transforms.contentApi(event),
-				transforms.contentApi_v1(event),
-				transforms.abApi(event)
-			]
-		
-		Promise
-			.all(t.map(function (p) {	// allow rejections in individual promises without failing  
-				return p.catch(function (err) {
-					console.log('error', err);
-					return undefined;
-				});
-			}))
-			.then(all => {
-				var [user, content, content_v1, ab] = all;
-				event.annotate('user', user);
-				event.annotate('content', content);
-				event.annotate('content_v1', content_v1);
-				event.annotate('ab', ab);
-				next(null, event);
-			})
-			.catch(err => {
-				console.log('error', err);
-				next(err, event);	// TODO annotate an 'error' flag
-				metrics.count('pipeline.v2.error', 1);
-			});
-	})
-		*/
-		
-		/*.pipe(es.map((event, next) => {
-			emitter.emit('enriched', event);
-			metrics.count('pipeline.v2.out', 1);
-			
-			// timing
-			var end = process.hrtime(start);
-			console.info("execution time (hr): %ds %dms", end[0], end[1]/1000000, end);
-			
-			if (end[1]/1000000 > 100) {
-				metrics.count('pipeline.v2.execution_time.exceeded_100ms', 1);
-			}
-			
-			if (end[1]/1000000 > 500) {
-				metrics.count('pipeline.v2.execution_time.exceeded_500ms', 1);
-			}
-
-			next(null, event);
-			.pipe(process.stdout)
-		*/
