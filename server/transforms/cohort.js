@@ -22,11 +22,11 @@ module.exports = (event) => {
 			if (match) {
 				var products = match[1].split('_');
 				cohort = products
-					.filter((product) => { 
-						return /^P/.test(product)
-					})
 					.map((product) => {
 						return cohorts.get(product)
+					})
+					.filter((cohort) => {	// remove unknown products
+						return cohort;
 					});
 			}
 		}
