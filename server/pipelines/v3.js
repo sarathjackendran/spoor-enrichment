@@ -39,6 +39,7 @@ Pipeline.prototype.process = (message) => {
 			transform.cohort(event),
 			transform.ingestQueueMetadata(event),
 			transform.time(event),
+			transform.url(event),
 			transform.userAgent(event),
 			transform.sessionApi(event),
 			transform.contentApi(event),
@@ -55,7 +56,7 @@ Pipeline.prototype.process = (message) => {
 	})
 	.then(annotations => {
 		
-		var [event, isValid, geo, cohort, ingest, time, ua, session, capi2, capi1, ab] = annotations;
+		var [event, isValid, geo, cohort, ingest, time, url, ua, session, capi2, capi1, ab] = annotations;
 
 		// calculate the end time in nano-seconds
 		var end = process.hrtime(start);
@@ -66,6 +67,8 @@ Pipeline.prototype.process = (message) => {
 		event.annotate('ingestQueueMetadata', ingest);
 		event.annotate('time', time);
 		event.annotate('ua', ua);
+		event.annotate('referrer', url.referrer);
+		event.annotate('url', url.location);
 		event.annotate('user', session);
 		event.annotate('content', capi2);
 		event.annotate('content_v1', capi1);
