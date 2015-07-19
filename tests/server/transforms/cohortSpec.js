@@ -18,16 +18,16 @@ describe('Cohort', function () {
 		e = new EventModel(rawSqs);
 		cohort(e).then(cohorts => {
 			expect(cohorts).to.deep.equal(['subscriber', 'registered']);
+			done()
 		});
-		done()
 	});
 	
 	it('Users with no products are anonymous', done => {
 		e = new EventModel(rawSqs__no_cohorts);
 		cohort(e).then(cohorts => {
 			expect(cohorts).to.deep.equal([]);
+			done()
 		});
-		done()
 	});
 
 });
