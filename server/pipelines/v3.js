@@ -11,6 +11,11 @@ const emitter = new EventEmitter();
 
 var Pipeline = () => {} 
 
+var roundedHiResTime = (time) => {
+	var timeInSeconds = parseFloat(`${time[0]}.${time[1]/1000000}`);
+	return Math.round(timeInSeconds * 10) * 100;
+}
+
 /* FIXME maybe just export normal event listener */
 Pipeline.prototype.on = (fn) => { emitter.on('enriched', fn) };
 
@@ -77,6 +82,8 @@ Pipeline.prototype.process = (message) => {
 			execution_time: end,
 			execution_time_in_seconds: parseFloat(`${end[0]}.${end[1]/1000000}`)
 		});
+	
+		metrics.count('pipeline.execution_time.' + roundedHiResTime(end), 1);
 
 		// all done		
 		metrics.count('pipeline.out', 1);
