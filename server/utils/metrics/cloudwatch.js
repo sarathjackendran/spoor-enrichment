@@ -30,7 +30,7 @@ setInterval(function () {
 			Statistics: [ "Sum" ],
 			Dimensions: [ {"Name":"QueueName","Value":"spoor-ingest-v2"} ],
 			MetricName: metric,
-			Period: 180,
+			Period: 60,
 			EndTime: new Date().toISOString(),
 			Namespace: "AWS/SQS",
 			StartTime: new Date(new Date() - (60 * 60 * 1000)).toISOString()
@@ -54,5 +54,5 @@ setInterval(function () {
 		});
 	});
 
-}, 6000); 
+}, 60000); 
 
