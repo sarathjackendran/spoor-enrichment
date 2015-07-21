@@ -20,7 +20,7 @@ var pluckUuidFromHeaders = function (event) {
 // 
 module.exports = function (event) {
 	
-	if (!process.env.transform_capi) {
+	if (!process.env.transform_capi && !process.env.mocha) {
 		console.log('transforms/content-api', 'is switched off');
 		return Promise.resolve({});
 	}

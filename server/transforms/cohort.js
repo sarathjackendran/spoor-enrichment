@@ -7,7 +7,7 @@ module.exports = (event) => {
 	
 	return new Promise((resolve, reject) => {
 		
-		if (!process.env.transform_cohort) {
+		if (!process.env.transform_cohort && !process.env.mocha) {
 			resolve({});
 		}
 

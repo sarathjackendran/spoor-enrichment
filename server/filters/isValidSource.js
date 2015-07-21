@@ -5,7 +5,7 @@ module.exports = (event) => {
 	
 	return new Promise((resolve, reject) => {
 		
-		if (!process.env.filter_validate) {
+		if (!process.env.filter_validate && !process.env.mocha) {
 			resolve({});
 		}
 	

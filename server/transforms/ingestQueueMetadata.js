@@ -6,7 +6,7 @@ module.exports = function (event) {
 	
 	return new Promise((resolve, reject) => {
 		
-		if (!process.env.transform_ingest) {
+		if (!process.env.transform_ingest && !process.env.mocha) {
 			resolve({});
 		}
 		

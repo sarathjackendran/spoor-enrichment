@@ -18,10 +18,7 @@ sqs: compile
 test: compile
 	@export SESSION_API_KEY=123; \
 	 export CAPI_API_KEY=`cat ~/.ftapi_v2`; \
-	 export transform_session=1; \
-	 export transform_capi=1; \
-	 export transform_ab=1; \
-	 export transform_capi_v1=1; \
+	 export mocha=1; \
 	 gulp compile-tests; \
 	 mocha -R spec --recursive dist-tests/server;
 
