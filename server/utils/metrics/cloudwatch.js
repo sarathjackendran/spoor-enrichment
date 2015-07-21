@@ -10,7 +10,7 @@ AWS.config.update({
 
 var cloudwatch = new AWS.CloudWatch();
 
-var metrics = [
+const metricKeys = [
 		'SentMessageSize',
 		'ApproximateNumberOfMessagesDelayed',
 		'ApproximateNumberOfMessagesVisible',
@@ -23,7 +23,7 @@ var metrics = [
 
 setInterval(function () {
 
-	metrics.forEach(function (metric) {
+	metricKeys.forEach(function (metric) {
 		
 		cloudwatch.getMetricStatistics({
 			Statistics: [ "Sum" ],
@@ -54,5 +54,5 @@ setInterval(function () {
 
 	});
 
-}, 60000); 
+}, 6000); 
 
