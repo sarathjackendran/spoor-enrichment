@@ -43,6 +43,6 @@ var loadMetrics = (name, queue) => {
 	);
 }
 
-setInterval(loadMetrics('ingest', process.env.SQS_INGEST), 60000);
-setInterval(loadMetrics('egest', process.env.SQS_EGEST), 60000);
-setInterval(loadMetrics('dead_letter', process.env.SQS_DEAD_LETTER), 60000);
+setInterval(() => { loadMetrics('ingest', process.env.SQS_INGEST) }, 60000);
+setInterval(() => { loadMetrics('egest', process.env.SQS_EGEST) }, 60000);
+setInterval(() => { loadMetrics('dead_letter', process.env.SQS_DEAD_LETTER) }, 60000);
