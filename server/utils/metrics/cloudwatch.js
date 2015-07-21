@@ -23,8 +23,9 @@ const metricKeys = [
 
 setInterval(function () {
 
+	console.log('collecting cloudwatch metrics');
+	
 	metricKeys.forEach(function (metric) {
-		
 		cloudwatch.getMetricStatistics({
 			Statistics: [ "Sum" ],
 			Dimensions: [ {"Name":"QueueName","Value":"spoor-ingest-v2"} ],
@@ -51,8 +52,7 @@ setInterval(function () {
 					})
 			}
 		});
-
 	});
 
-}, 180000); 
+}, 6000); 
 

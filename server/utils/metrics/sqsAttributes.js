@@ -12,6 +12,7 @@ var sqs = new AWS.SQS();
 var sqsUrl = process.env.SQS_INGEST;
 
 setInterval(function () {
+	console.log('collecting sqs metrics');
 	sqs.getQueueAttributes({
 			QueueUrl: sqsUrl, AttributeNames: [
 				'ApproximateNumberOfMessages',
@@ -28,4 +29,4 @@ setInterval(function () {
 			}
 		}
 	);
-}, 60000);
+}, 6000);
