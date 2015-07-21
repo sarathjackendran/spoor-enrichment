@@ -8,25 +8,41 @@ AWS.config.update({
 	"region": "eu-west-1"
 });
 
-var sqs = new AWS.SQS();
-var sqsUrl = process.env.SQS_INGEST;
+if (!process.env.SQS_INGEST) {
+	throw new Error('You must set SQS_INGEST in your environment');
+}
 
-setInterval(function () {
-	console.log('collecting sqs metrics');
+if (!process.env.SQS_EGEST) {
+	throw new Error('You must set SQS_EGEST in your environment');
+}
+
+if (!process.env.SQS_DEAD_LETTER) {
+	throw new Error('You must set SQS_DEAD_LETTER in your environment');
+}
+
+const sqs = new AWS.SQS();
+
+var loadMetrics = (name, queue) => { 
+
+	console.log('collecting sqs metrics for', name, queue);
 	sqs.getQueueAttributes({
-			QueueUrl: sqsUrl, AttributeNames: [
+			QueueUrl: queue, AttributeNames: [
 				'ApproximateNumberOfMessages',
 				'ApproximateNumberOfMessagesDelayed',
 				'ApproximateNumberOfMessagesNotVisible'
 			] 
 		}, function(err, data) {
-			if (err) console.log(err, err.stack); // an error occurred
+			if (err) console.log(err, err.stack);
 			else {
 				console.log(data);
-				metrics.count('sqs.ApproximateNumberOfMessages', parseInt(data.Attributes.ApproximateNumberOfMessages));
-				metrics.count('sqs.ApproximateNumberOfMessagesDelayed', parseInt(data.Attributes.ApproximateNumberOfMessagesDelayed));
-				metrics.count('sqs.ApproximateNumberOfMessagesNotVisible', parseInt(data.Attributes.ApproximateNumberOfMessagesNotVisible));
+				metrics.count(`sqs.${name}.ApproximateNumberOfMessages`, parseInt(data.Attributes.ApproximateNumberOfMessages));
+				metrics.count(`sqs.${name}.ApproximateNumberOfMessagesDelayed`, parseInt(data.Attributes.ApproximateNumberOfMessagesDelayed));
+				metrics.count(`sqs.${name}.ApproximateNumberOfMessagesNotVisible`, parseInt(data.Attributes.ApproximateNumberOfMessagesNotVisible));
 			}
 		}
 	);
-}, 60000);
+}
+
+setInterval(loadMetrics('ingest', process.env.SQS_INGEST), 60000);
+setInterval(loadMetrics('egest', process.env.SQS_EGEST), 60000);
+setInterval(loadMetrics('dead_letter', process.env.SQS_DEAD_LETTER), 60000);
