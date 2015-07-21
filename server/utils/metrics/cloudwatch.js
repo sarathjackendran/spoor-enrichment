@@ -54,5 +54,5 @@ setInterval(function () {
 
 	});
 
-}, 6000); 
+}, 180000); 
 
