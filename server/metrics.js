@@ -3,7 +3,7 @@
 var AWS				= require('aws-sdk'); 
 var metrics			= require('next-metrics')
 
-metrics.init({ app: 'spoor-enrichment', flushEvery: 30000 });
+metrics.init({ app: 'spoor-enrichment', flushEvery: 70000 });
 
 AWS.config.update({
 	accessKeyId: process.env.accessKey, 
