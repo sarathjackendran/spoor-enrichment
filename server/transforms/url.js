@@ -15,7 +15,7 @@ module.exports = function (event) {
 	
 	return new Promise((resolve, reject) => {
 		
-		if (!process.env.transform_url) {
+		if (!process.env.transform_url && !process.env.mocha) {
 			resolve({});
 		}
 

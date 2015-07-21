@@ -6,7 +6,7 @@ module.exports = (event) => {
 	
 	return new Promise((resolve, reject) => {
 
-		if (!process.env.transform_geo) {
+		if (!process.env.transform_geo && !process.env.mocha) {
 			resolve({});
 		}
 

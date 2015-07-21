@@ -20,7 +20,7 @@ describe('Geo', () => {
 	it('Determine country from the HTTP headers', done => {
 		geo(e).then(geo => {
 			expect(geo.country).to.equal('GB');
-			expect(geo.ftRegion).to.equal('uk');
+			expect(geo.ftRegion).to.equal('UK');
 			done();
 		});
 	});

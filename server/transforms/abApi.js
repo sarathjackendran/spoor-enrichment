@@ -24,7 +24,7 @@ module.exports = function (event) {
 		return Promise.resolve({});
 	}
 
-	if (!process.env.transform_ab) {
+	if (!process.env.transform_ab && !process.env.mocha) {
 		console.log('transforms/ab-api', 'is switched off');
 		return Promise.resolve({});
 	}

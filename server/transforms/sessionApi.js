@@ -4,7 +4,7 @@ var metrics = require('next-metrics');
 
 module.exports = function (event) {
 
-	if (!process.env.transform_session) {
+	if (!process.env.transform_session && !process.env.mocha) {
 		console.log('transforms/session-api', 'is switched off');
 		return Promise.resolve({});
 	}

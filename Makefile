@@ -7,7 +7,7 @@ clean:
 compile:
 	 gulp compile
 
-run: compile
+sqs: compile
 	@export accessKey=`cat ~/.aws-access.spoor`; \
 	 export secretAccessKey=`cat ~/.aws-secret.spoor`; \
 	 export SQS_INGEST=`cat ~/.aws-sqs.spoor-v2`; \
@@ -18,10 +18,7 @@ run: compile
 test: compile
 	@export SESSION_API_KEY=123; \
 	 export CAPI_API_KEY=`cat ~/.ftapi_v2`; \
-	 export transform_session=1; \
-	 export transform_capi=1; \
-	 export transform_ab=1; \
-	 export transform_capi_v1=1; \
+	 export mocha=1; \
 	 gulp compile-tests; \
 	 mocha -R spec --recursive dist-tests/server;
 
@@ -30,3 +27,11 @@ deploy: compile
 
 web: compile
 	 @nodemon dist/app.js
+
+metrics: compile
+	 @export SQS_INGEST=`cat ~/.aws-sqs.spoor-v2`; \
+	  export SQS_EGEST=`cat ~/.aws-sqs.spoor-egest-v2`; \
+	  export SQS_DEAD_LETTER=`cat ~/.aws-sqs.spoor-dead-letter`; \
+	  export accessKey=`cat ~/.aws-access.spoor`; \
+	  export secretAccessKey=`cat ~/.aws-secret.spoor`; \
+	  nodemon dist/metrics.js
