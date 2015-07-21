@@ -30,3 +30,9 @@ deploy: compile
 
 web: compile
 	 @nodemon dist/app.js
+
+metrics: compile
+	 @export SQS_INGEST=`cat ~/.aws-sqs.spoor-v2`; \
+	  export accessKey=`cat ~/.aws-access.spoor`; \
+	  export secretAccessKey=`cat ~/.aws-secret.spoor`; \
+	  nodemon dist/metrics.js
