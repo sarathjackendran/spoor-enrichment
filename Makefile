@@ -7,7 +7,7 @@ clean:
 compile:
 	 gulp compile
 
-run: compile
+sqs: compile
 	@export accessKey=`cat ~/.aws-access.spoor`; \
 	 export secretAccessKey=`cat ~/.aws-secret.spoor`; \
 	 export SQS_INGEST=`cat ~/.aws-sqs.spoor-v2`; \
@@ -33,6 +33,8 @@ web: compile
 
 metrics: compile
 	 @export SQS_INGEST=`cat ~/.aws-sqs.spoor-v2`; \
+	  export SQS_EGEST=`cat ~/.aws-sqs.spoor-egest-v2`; \
+	  export SQS_DEAD_LETTER=`cat ~/.aws-sqs.spoor-dead-letter`; \
 	  export accessKey=`cat ~/.aws-access.spoor`; \
 	  export secretAccessKey=`cat ~/.aws-secret.spoor`; \
 	  nodemon dist/metrics.js
