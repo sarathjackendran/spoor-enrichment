@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.1.28",
+    "cheerio": "^0.19.0",
     "event-stream": "^3.3.1",
     "express": "strongloop/express#5.0.0-alpha.2",
     "flat": "^1.6.0",
