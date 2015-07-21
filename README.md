@@ -20,6 +20,17 @@ annotating the resulting data structure.
 
 If successful, the event model is pushed on to an egest Kinesis stream and SQS queue.
 
+### Processes
+
+The application three processes - _sqs_ consumes the Spoor ingest queue and
+enriches the data, Web is a simple web application to display the flag states,
+and `metrics` loads various external metrics (cloudwatch, fastly) in to
+graphite.
+
+You can run these with the Makefile, i.e. `make sqs`, `make web`, and `make metrics`
+
+Or on Heroku, `foreman start web` etc.
+
 ### Flags
 
 The pipeline is controlled by several flags. The flags can be turned on or off
