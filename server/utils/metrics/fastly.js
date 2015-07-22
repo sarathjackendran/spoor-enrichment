@@ -58,7 +58,7 @@ setInterval(function () {
 				]);
 
 				for (let key of m.keys()) {
-                    metrics.count(`fastly.${serviceId}.${key}`, `${m.get(key)} ${timestamp}`);
+                    metrics.count(`fastly.${serviceId}.${key}`, m.get(key));
 				}
             
 				console.log('Stats logged.');
