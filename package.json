@@ -15,6 +15,7 @@
     "aws-sdk": "^2.1.28",
     "event-stream": "^3.3.1",
     "express": "strongloop/express#5.0.0-alpha.2",
+    "fastly": "financial-times/fastly#gets-qs",
     "flat": "^1.6.0",
     "forever": "^0.14.2",
     "jade": "^1.11.0",

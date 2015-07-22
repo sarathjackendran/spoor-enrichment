@@ -34,4 +34,6 @@ metrics: compile
 	  export SQS_DEAD_LETTER=`cat ~/.aws-sqs.spoor-dead-letter`; \
 	  export accessKey=`cat ~/.aws-access.spoor`; \
 	  export secretAccessKey=`cat ~/.aws-secret.spoor`; \
-	  nodemon dist/metrics.js
+	  export FASTLY_SERVICE=2UZqZLWRfC73vSwyx0Hett; \
+	  export FASTLY_APIKEY=`cat ~/.fastly_key`; \
+	  nodemon dist/metrics.js 
