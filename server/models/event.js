@@ -1,5 +1,6 @@
 
 var flatten		= require('flat');
+var	debug		= require('debug')('event-model');
 
 var EventModel = function (message) {
 	this.ingest = { };
@@ -21,7 +22,10 @@ EventModel.prototype._sqsToJson = function () {
 		}
 
 		this.ingest._bodyFlattened = flatten(this.ingest._body);
-		this.ingest._headers = this.ingest._asJson.headers || {}; 
+		this.ingest._headers = this.ingest._asJson.headers || {};
+
+		debug('%s Event successfully received by Spoor enrichment', this.ingest._headers['x-request-id']);
+
 	} catch (err) {
 		console.log(err);
 		this.ingest._asJson = {} 

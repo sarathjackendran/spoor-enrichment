@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.1.28",
+    "debug": "^1.0.4",
     "event-stream": "^3.3.1",
     "express": "strongloop/express#5.0.0-alpha.2",
     "fastly": "financial-times/fastly#gets-qs",
