@@ -1,26 +1,38 @@
 
 var metrics			= require('next-metrics');
 
-var serviceId    = process.env.fastly_service;
-var fastly       = require('fastly')(process.env.fastly_apikey, encodeURIComponent(serviceId), { verbose: true });
+if (!process.env.FASTLY_SERVICE) {
+	throw new Error('You must set FASTLY_SERVICE in your environment');
+}
 
-module.exports = function (graphite) {
+if (!process.env.FASTLY_APIKEY) {
+	throw new Error('You must set FASTLY_APIKEY in your environment');
+}
 
-    fastly
-        .stats({ 
+var serviceId    = process.env.FASTLY_SERVICE;
+var fastly       = require('fastly')(process.env.FASTLY_APIKEY, encodeURIComponent(serviceId), { verbose: true });
+
+setInterval(function () {
+
+	console.log('collecting fastly metrics for service', serviceId, encodeURIComponent(serviceId));
+    
+	fastly
+        .stats(serviceId, { 
             from: '5 minutes ago',
             to: '3 minutes ago',
             by: 'minute'
         })
         .then(function (stats) {
-            
+			
+			console.log(JSON.parse(stats).detail);
+
             JSON.parse(stats).data.forEach(function (stats) {
 
 				console.log(stats);
 
                 var timestamp = stats.start_time;
                 
-				var metrics = new Map([
+				var m = new Map([
                     ["header_size"], [stats.header_size],
                     ["body_size"], [stats.body_size],
                     ["requests"], [stats.requests],
@@ -30,8 +42,6 @@ module.exports = function (graphite) {
                     ["pass"], [stats.pass],
                     ["pipe"], [stats.pipe],
                     ["synth"], [stats.synth],
-                    ["hits_time"], [stats.hits_time],
-                    ["miss_time"], [stats.miss_time],
                     ["status_1xx"], [stats.status_1xx],
                     ["status_2xx"], [stats.status_2xx],
                     ["status_3xx"], [stats.status_3xx],
@@ -47,19 +57,16 @@ module.exports = function (graphite) {
                     ["errors"], [stats.errors]
 				]);
 
-                metricsWithTimeStamp = metrics.forEach((value, key) => {
-                    metrics.count(`fastly.${serviceId}`, `${value} ${timestamp}`);
-                })
+				for (let key of m.keys()) {
+                    metrics.count(`fastly.${serviceId}.${key}`, m.get(key));
+				}
             
+				console.log('Stats logged.');
 			});
-        })
-        .then(function (res) { 
-            debug('Stats logged.');
         })
         .catch(function (err) {
             throw new Error(err); 
         })
         .done();
 
-};
-
+}, 60000); 
