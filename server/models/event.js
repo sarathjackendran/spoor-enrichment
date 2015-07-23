@@ -30,7 +30,7 @@ EventModel.prototype._sqsToJson = function () {
 		this.ingest._bodyFlattened = flatten(this.ingest._body);
 		this.ingest._headers = this.ingest._asJson.headers || {};
 
-		debug('%s Event successfully received by Spoor enrichment', this.ingest._headers['x-request-id']);
+		debug('%s Event received by Spoor enrichment', this.ingest._headers['x-request-id']);
 
 	} catch (error) {
 		debug('%s Parsing of the event failed %s', undefined, error);
