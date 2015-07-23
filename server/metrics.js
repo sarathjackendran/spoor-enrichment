@@ -16,6 +16,5 @@ AWS.config.update({
 
 require('./utils/metrics/cloudwatch');
 require('./utils/metrics/sqsAttributes');
-require('./utils/metrics/fastly');
 
 console.log('collecting metrics');
