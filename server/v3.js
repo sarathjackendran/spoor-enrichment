@@ -25,10 +25,6 @@ var pipeline = new Pipeline();
 // Sinks
 pipeline.on(sinks.kinesis);
 pipeline.on(sinks.sqs);
-pipeline.on(event => {
-	console.log(JSON.stringify(event));
-	console.log('Timing:', event.egest.annotations.pipeline);
-});
 
 var sqsStream = () => {
 	
