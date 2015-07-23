@@ -17,9 +17,9 @@ module.exports = (event) => {
 		var isValid = hasCategory && hasAction && hasSource;
 
 		if (isValid) {
-			debug('%s Event is INVALID', event.ingest._headers['x-request-id']);
-		} else {
 			debug('%s Event is valid', event.ingest._headers['x-request-id']);
+		} else {
+			debug('%s Event is INVALID', event.ingest._headers['x-request-id']);
 		}
 
 		if (hasSource) {
