@@ -54,13 +54,12 @@ var sqsStream = () => {
 						console.log('Found new messages:', data.Messages.length);
 
 						// FIXME allow more than one message. FIXME. ideally we wouldn't do a JSON.stringify.
-							
-						metrics.count('ingest.consumer.receiveMessage.found', 1);
 
 						if (process.env.pipeline) {
 
 							data.Messages.forEach((message, i) => {
 						
+								metrics.count('ingest.consumer.receiveMessage.found', 1);
 								console.log('Processing message', i);
 								
 								pipeline.process(message)
