@@ -84,14 +84,37 @@ Pipeline.prototype.process = (message) => {
 			execution_time_in_seconds: parseFloat(`${end[0]}.${end[1]/1000000}`)
 		});
 	
+		return Promise.resolve(event);
+
+	})	
+	.then(event => {
+
+		var transforms = [
+			Promise.resolve(event),
+			transform.userPrefs(event)
+		];
+
+		return Promise.all(transforms);
+	})
+	.then(annotations => {
+		
+		var [event, userPrefs] = annotations;
+		
+		event.annotate('userPrefs', userPrefs);
+	
+		//console.log(JSON.stringify(event.annotations()));
+
+		// calculate the end time in nano-seconds
+		var end = process.hrtime(start);
 		metrics.count('pipeline.execution_time.' + roundedHiResTime(end), 1);
 		
 		debug('%s Event successfully enriched', event.ingest._headers['x-request-id']);
-
+		
 		// all done		
 		metrics.count('pipeline.out', 1);
 		emitter.emit('enriched', event);
-	})	
+	
+	})
 	.catch(error => { 
 		console.log('pipeline error', error);
 		metrics.count('pipeline.error', 1);
