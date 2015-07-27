@@ -34,7 +34,8 @@ var sqsStream = () => {
 		
 		sqs.receiveMessage({
 			QueueUrl: sqsUrlIngest,
-			WaitTimeSeconds: 20
+			WaitTimeSeconds: 20,
+			MaxNumberOfMessages: 10
 		}, (err, data) => {
 
 				if (err) {
@@ -50,37 +51,42 @@ var sqsStream = () => {
 				
 				} else {
 					
-						console.log('Found a new message');
+						console.log('Found new messages:', data.Messages.length);
 
 						// FIXME allow more than one message. FIXME. ideally we wouldn't do a JSON.stringify.
 							
 						metrics.count('ingest.consumer.receiveMessage.found', 1);
 
 						if (process.env.pipeline) {
-							var message = data.Messages[0];
-							pipeline.process(message)
-								.then(function () {
-				
-									if (!isProduction) {
-										return;
-									}
-									
-									console.log('deleting message', sqsUrlIngest);
 
-									sqs.deleteMessage({
-										QueueUrl: sqsUrlIngest,
-										ReceiptHandle: data.Messages[0].ReceiptHandle
-									}, function(err, data) {
-										if (err) {
-											console.log('error deleting message', err, err.stack);		// an error occurred
-											metrics.count('ingest.consumer.deleteMessage.error', 1);
+							data.Messages.forEach((message, i) => {
+						
+								console.log('Processing message', i);
+								
+								pipeline.process(message)
+									.then(function () {
+					
+										console.log('deleting message:', i, sqsUrlIngest, data.Messages[i].ReceiptHandle);
+										
+										if (!isProduction) {
+											return;
 										}
-										else {
-											console.log('delete ok', data);				// successful response		
-											metrics.count('ingest.consumer.deleteMessage.success', 1);
-										}
-									})
-								}).catch();
+										
+										sqs.deleteMessage({
+											QueueUrl: sqsUrlIngest,
+											ReceiptHandle: data.Messages[i].ReceiptHandle
+										}, function(err, data) {
+											if (err) {
+												console.log('error deleting message', err, err.stack);		// an error occurred
+												metrics.count('ingest.consumer.deleteMessage.error', 1);
+											}
+											else {
+												console.log('delete ok', data);				// successful response		
+												metrics.count('ingest.consumer.deleteMessage.success', 1);
+											}
+										})
+									}).catch();
+							});
 						}
 				}
 
