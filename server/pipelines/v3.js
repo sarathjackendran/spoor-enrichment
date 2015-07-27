@@ -94,7 +94,7 @@ Pipeline.prototype.process = (message) => {
 	})	
 	.catch(error => { 
 		console.log('pipeline error', error);
-		metrics.count('pipeline.v2.error', 1);
+		metrics.count('pipeline.error', 1);
 	});
 
 }
