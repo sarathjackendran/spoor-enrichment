@@ -68,6 +68,11 @@ module.exports = (req, res) => {
 				flag: 'transform_cohort',
 				status: !!process.env.transform_cohort,
 				description: 'Annotates the event with the FT cohort data (Eg, registered, subscriber etc.)'
+			},
+			{
+				flag: 'transform_myft',
+				status: !!process.env.transform_myft,
+				description: 'Annotates the event with information from myFT (next.ft.com only)'
 			}
 		],
 		sinks: [

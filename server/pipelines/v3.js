@@ -91,7 +91,7 @@ Pipeline.prototype.process = (message) => {
 
 		var transforms = [
 			Promise.resolve(event),
-			transform.userPrefs(event)
+			transform.myFtApi(event)
 		];
 
 		return Promise.all(transforms);
