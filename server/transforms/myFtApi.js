@@ -29,7 +29,7 @@ module.exports = (event) => {
 	
 	return fetch('https://next.ft.com/__user-prefs/beacon/User:guid-' + uuid, {
 				headers: {
-					'x-api-key': process.env.USER_PREFS_API_KEY
+					'x-api-key': process.env.MYFT_API_KEY
 				}
 			}).then(response => {
 				console.log('transforms/myft-api', uuid, res.status);
