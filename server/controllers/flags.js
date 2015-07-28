@@ -90,7 +90,7 @@ module.exports = (req, res) => {
 				flag: 'sink_stdout',
 				status: !!process.env.sink_stdou,
 				description: 'Sends the event (post-annotation) to STDOUT.'
-			},
+			}
 		],
 		metrics: [
 			{
