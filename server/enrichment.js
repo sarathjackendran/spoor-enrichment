@@ -25,6 +25,7 @@ var pipeline = new Pipeline();
 // Sinks
 pipeline.on(sinks.kinesis);
 pipeline.on(sinks.sqs);
+pipeline.on(sinks.stdout);
 
 var sqsStream = () => {
 
@@ -64,6 +65,7 @@ var sqsStream = () => {
 
 								pipeline.process(message)
 									.then(function () {
+										
 										if (!isProduction) {
 											return;
 										}
