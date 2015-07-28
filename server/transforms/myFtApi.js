@@ -32,13 +32,12 @@ module.exports = (event) => {
 					'x-api-key': process.env.MYFT_API_KEY
 				}
 			}).then(response => {
-				console.log('transforms/myft-api', uuid, res.status);
-				metrics.count('pipeline.transforms.myft-api.fetch.response.' + res.status, 1);
+				console.log('transforms/myft-api', uuid, response.status);
+				metrics.count('pipeline.transforms.myft-api.fetch.response.' + response.status, 1);
 				return response.json()
 			}).then(myft => {
 				
-				if (res.status !== 200) {
-					console.log('transforms/myft-api', 'status was not a 200', res.status);
+				if (!myft) {
 					return { }
 				} else {
 
@@ -48,26 +47,12 @@ module.exports = (event) => {
 							preferences[pref.Relationship.S.split(':').pop()] = true;
 						}
 					});
-					
-					var streamRegex = /^stream\/([a-z]+Id)\/(.*)/;
-					var isEngagedTopic = false;
-					if(typeof myft.userHistory !== 'undefined' && streamRegex.test(uuid)) {
-						var slugs = uuid.match(streamRegex);
-						var id = slugs[1] + ':"' + slugs[2] + '"';
-
-						var isEngaged = myft.userHistory.Items.some(function(topic) {
-							return topic.id === id && topic.count > 3;
-						});
-
-						if(isEngaged) {
-							isEngagedTopic = true;
-						}
-					};
+				
+					console.log('transforms/myft-api', 'user is following items:', myft.following.Count);
 
 					return {
 						following: myft.following.Count,
-						preferences: preferences,
-						isEngagedTopic: isEngagedTopic 
+						preferences: preferences
 					}
 				}
 			})
