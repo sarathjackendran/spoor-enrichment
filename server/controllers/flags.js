@@ -85,7 +85,12 @@ module.exports = (req, res) => {
 				flag: 'sink_sqs',
 				status: !!process.env.sink_sqs,
 				description: 'Forwards events to the Spoor egest SQS queue.'
-			}
+			},
+			{
+				flag: 'sink_stdout',
+				status: !!process.env.sink_stdou,
+				description: 'Sends the event (post-annotation) to STDOUT.'
+			},
 		],
 		metrics: [
 			{
