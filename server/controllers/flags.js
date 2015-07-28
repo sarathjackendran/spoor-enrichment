@@ -81,6 +81,23 @@ module.exports = (req, res) => {
 				status: !!process.env.sink_sqs,
 				description: 'Forwards events to the Spoor egest SQS queue.'
 			}
+		],
+		metrics: [
+			{
+				flag: 'metrics_cloudwatch',
+				status: !!process.env.metrics_cloudwatch,
+				description: 'Loads Cloudwatch metrics in to graphite.'
+			},
+			{
+				flag: 'metrics_fastly',
+				status: !!process.env.metrics_fastly,
+				description: 'Loads Fastly metrics in to graphite.'
+			},
+			{
+				flag: 'metrics_sqs',
+				status: !!process.env.metrics_sqs,
+				description: 'Loads SQS metrics in to graphite.'
+			}
 		]
 	})
 			  
