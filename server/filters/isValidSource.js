@@ -1,5 +1,6 @@
 
 var metrics		= require('next-metrics')
+var	debug		= require('debug')('is-valid-source');
 
 module.exports = (event) => {
 	
@@ -14,6 +15,12 @@ module.exports = (event) => {
 		var hasSource	= !!event.pluck('system.source');
 
 		var isValid = hasCategory && hasAction && hasSource;
+
+		if (isValid) {
+			debug('%s Event is valid', event.ingest._headers['x-request-id']);
+		} else {
+			debug('%s Event is INVALID', event.ingest._headers['x-request-id']);
+		}
 
 		if (hasSource) {
 			var source = event.pluck('system.source');

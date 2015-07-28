@@ -15,7 +15,7 @@ var rawSqs__no_time_received = JSON.parse(fs.readFileSync('./tests/server/fixtur
 var e;
 
 describe('Time', function () {
-	
+
 	beforeEach(() => {
 		e = new EventModel(rawSqs__no_time_received);
 	});
@@ -41,9 +41,9 @@ describe('Time', function () {
 		time(e).then(t => {
 			expect(t.day).to.equal('2015-03-02T00:00:00Z');
 			done();
-		});	
+		});
 	});
-	
+
 	it('Round the week of the year the event happened', done => {
 		var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:12:01 UTC').getTime());
 		time(e).then(t => {
@@ -51,7 +51,7 @@ describe('Time', function () {
 			done();
 		});
 	});
-	
+
 	it('Round the time of the event to the ISO hour', done => {
 		var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:12:01 UTC').getTime());
 		time(e).then(t => {
@@ -59,7 +59,38 @@ describe('Time', function () {
 			done();
 		});
 	});
-	
+
+	describe('Thirty minute interval', function() {
+		it('Round the time of the event to hour just passed', done => {
+			var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:12:01 UTC').getTime());
+			time(e).then(t => {
+				expect(t.thirtyMinuteInterval).to.equal('2015-06-15T20:00:00.000Z');
+				done();
+			});
+		});
+		it('Round the time of the event to hour approaching', done => {
+			var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:47:01 UTC').getTime());
+			time(e).then(t => {
+				expect(t.thirtyMinuteInterval).to.equal('2015-06-15T21:00:00.000Z');
+				done();
+			});
+		});
+		it('Round the time of the event to the half hour just passed', done => {
+			var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:37:01 UTC').getTime());
+			time(e).then(t => {
+				expect(t.thirtyMinuteInterval).to.equal('2015-06-15T20:30:00.000Z');
+				done();
+			});
+		});
+		it('Round the time of the event to the half hour just approaching', done => {
+			var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:28:01 UTC').getTime());
+			time(e).then(t => {
+				expect(t.thirtyMinuteInterval).to.equal('2015-06-15T20:30:00.000Z');
+				done();
+			});
+		});
+	});
+
 	it('Round the time of the event being logged', done => {
 		var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:12:01 UTC').getTime());
 		time(e).then(t => {
@@ -67,7 +98,7 @@ describe('Time', function () {
 			done();
 		});
 	});
-	
+
 	it('Use the offset time where specified', done => {
 		var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:12:01 UTC').getTime());
 		var offset = new EventModel(rawSqs__time_offset);
@@ -77,7 +108,7 @@ describe('Time', function () {
 			done();
 		});
 	});
-	
+
 	it('Use the time the event was received where specified', done => {
 		var offset = new EventModel(rawSqs);
 		time(offset).then(t => {
@@ -85,7 +116,7 @@ describe('Time', function () {
 			done();
 		});
 	});
-	
+
 	it('Generate various time tokens', done => {
 		var ft = sinon.useFakeTimers(new Date('Mon, 15 Jun 2015 20:12:01 UTC').getTime());
 		time(e).then(t => {

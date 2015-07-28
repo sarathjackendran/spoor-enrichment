@@ -5,6 +5,7 @@ var filter			= require('../filters');
 var transform		= require('../transforms');
 var EventModel		= require('../models').EventModel;
 var metrics			= require('next-metrics')
+var	debug			= require('debug')('pipeline');
 
 var EventEmitter	= require('events').EventEmitter;
 const emitter = new EventEmitter();
@@ -84,6 +85,8 @@ Pipeline.prototype.process = (message) => {
 		});
 	
 		metrics.count('pipeline.execution_time.' + roundedHiResTime(end), 1);
+		
+		debug('%s Event successfully enriched', event.ingest._headers['x-request-id']);
 
 		// all done		
 		metrics.count('pipeline.out', 1);
@@ -91,7 +94,7 @@ Pipeline.prototype.process = (message) => {
 	})	
 	.catch(error => { 
 		console.log('pipeline error', error);
-		metrics.count('pipeline.v2.error', 1);
+		metrics.count('pipeline.error', 1);
 	});
 
 }

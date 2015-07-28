@@ -1,5 +1,6 @@
 
 var flatten		= require('flat');
+var	debug		= require('debug')('event-model');
 
 var EventModel = function (message) {
 	this.ingest = { };
@@ -9,8 +10,14 @@ var EventModel = function (message) {
 };
 
 EventModel.prototype._sqsToJson = function () {
+	
 	try {
 		this.ingest._asJson = JSON.parse(this.ingest._raw.Body);
+	} catch (error) {
+		debug('%s Event body was not parsed', undefined, error);
+	}
+
+	try {
 		var message = new Buffer(this.ingest._asJson.message);
 	
 		// Avoid 'unexpected input' error when trying to convert an empty buffer to a string
@@ -21,9 +28,12 @@ EventModel.prototype._sqsToJson = function () {
 		}
 
 		this.ingest._bodyFlattened = flatten(this.ingest._body);
-		this.ingest._headers = this.ingest._asJson.headers || {}; 
-	} catch (err) {
-		console.log(err);
+		this.ingest._headers = this.ingest._asJson.headers || {};
+
+		debug('%s Event received by Spoor enrichment', this.ingest._headers['x-request-id']);
+
+	} catch (error) {
+		debug('%s Parsing of the event failed %s', undefined, error);
 		this.ingest._asJson = {} 
 		this.ingest._body = {} 
 		this.ingest._bodyFlattened = {} 
