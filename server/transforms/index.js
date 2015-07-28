@@ -11,3 +11,4 @@ module.exports.sessionApi			= require('./sessionApi');
 module.exports.contentApi			= require('./contentApi');
 module.exports.contentApi_v1		= require('./contentApi-v1');
 module.exports.abApi				= require('./abApi');
+module.exports.myFtApi				= require('./myFtApi');

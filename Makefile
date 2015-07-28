@@ -13,6 +13,7 @@ sqs: compile
 	 export SQS_INGEST=`cat ~/.aws-sqs.spoor-v2`; \
 	 export CAPI_API_KEY=`cat ~/.ftapi_v2`; \
 	 export SESSION_API_KEY=`cat ~/.session-api`; \
+	 export MYFT_API_KEY=`cat ~/.myft-api`; \
 	 node dist/enrichment.js
 
 test: compile
