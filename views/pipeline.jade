@@ -46,3 +46,12 @@ html
 					td= sink.flag
 					td= sink.description 
 
+		h2 Metrics 
+		p Statistics on various parts of the pipeline. 
+		table
+			each metric in metrics
+				tr
+					td(class='status-'+metric.status)= metric.status
+					td= metric.flag
+					td= metric.description 
+

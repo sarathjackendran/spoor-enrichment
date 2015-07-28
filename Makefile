@@ -4,7 +4,7 @@ clean:
 	 rm -Rf dist/*; \
 	 rm -Rf dist-tests/*
 
-compile:
+compile: clean
 	 gulp compile
 
 sqs: compile
