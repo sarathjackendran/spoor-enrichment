@@ -14,8 +14,6 @@ module.exports = (event) => {
 	if (!hasUuid) {
 		return Promise.resolve({});
 	}
-	
-	console.log('transforms/myft-api', 'fetching', uuid, event.annotations().url.hostname);
 
 	if (event.annotations().url && event.annotations().url.hostname !== 'next.ft.com') {
 		return Promise.resolve({});
@@ -25,7 +23,7 @@ module.exports = (event) => {
 
 	metrics.count('pipeline.transforms.myft-api.count', 1);
 	
-	console.log('transforms/myft-api', 'fetching', uuid, event.annotations());
+	console.log('transforms/myft-api', 'fetching', hasUuid, event.annotations().user.uuid, event.annotations().url.hostname);
 
 	metrics.count('pipeline.transforms.myft-api.fetch.request', 1);
 	
@@ -34,37 +32,43 @@ module.exports = (event) => {
 					'x-api-key': process.env.USER_PREFS_API_KEY
 				}
 			}).then(response => {
+				console.log('transforms/myft-api', uuid, res.status);
+				metrics.count('pipeline.transforms.myft-api.fetch.response.' + res.status, 1);
 				return response.json()
 			}).then(myft => {
-
-				var preferences = {};
-				myft.preferences.Items.forEach(function (pref) {
-					if (pref.Owner.S.indexOf('User:') >= 0) {
-						preferences[pref.Relationship.S.split(':').pop()] = true;
-					}
-				});
 				
-				var streamRegex = /^stream\/([a-z]+Id)\/(.*)/;
-				var isEngagedTopic = false;
-				if(typeof userHistory !== 'undefined' && streamRegex.test(uuid)) {
-					var slugs = uuid.match(streamRegex);
-					var id = slugs[1] + ':"' + slugs[2] + '"';
+				if (res.status !== 200) {
+					console.log('transforms/myft-api', 'status was not a 200', res.status);
+					return { }
+				} else {
 
-					var isEngaged = myft.userHistory.Items.some(function(topic) {
-						return topic.id === id && topic.count > 3;
+					var preferences = {};
+					myft.preferences.Items.forEach(function (pref) {
+						if (pref.Owner.S.indexOf('User:') >= 0) {
+							preferences[pref.Relationship.S.split(':').pop()] = true;
+						}
 					});
+					
+					var streamRegex = /^stream\/([a-z]+Id)\/(.*)/;
+					var isEngagedTopic = false;
+					if(typeof myft.userHistory !== 'undefined' && streamRegex.test(uuid)) {
+						var slugs = uuid.match(streamRegex);
+						var id = slugs[1] + ':"' + slugs[2] + '"';
 
-					if(isEngaged) {
-						isEngagedTopic = true;
+						var isEngaged = myft.userHistory.Items.some(function(topic) {
+							return topic.id === id && topic.count > 3;
+						});
+
+						if(isEngaged) {
+							isEngagedTopic = true;
+						}
+					};
+
+					return {
+						following: myft.following.Count,
+						preferences: preferences,
+						isEngagedTopic: isEngagedTopic 
 					}
-				};
-
-				return {
-					following: {
-						count: myft.following.Count
-					},
-					preferences: preferences,
-					isEngagedTopic: isEngagedTopic 
 				}
 			})
 			.catch((err) => {
