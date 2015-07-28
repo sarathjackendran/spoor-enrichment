@@ -2,6 +2,7 @@
 var url		= require('url');
 var fetch	= require('node-fetch');
 var metrics = require('next-metrics');
+var cheerio	= require('cheerio');
 
 const isArticle = /([a-f0-9-]{36})/;
 
@@ -74,6 +75,9 @@ module.exports = function (event) {
 			} else {
 				return res.json()
 					.then(content => {
+						
+						var $ = cheerio.load((content.item.body && content.item.body.body) || '');
+
 						return {
 							classification: url2classification(content.item.location.uri),
 							uuid: content.item.id,
@@ -82,7 +86,15 @@ module.exports = function (event) {
 							publishedDate: content.item.lifecycle.initialPublishDateTime,
 							age: (new Date() - new Date(content.item.lifecycle.initialPublishDateTime)) / 1000,
 							wordCount: countWords(content.item.body.body),
-							genre: genreFromMetadata(content.item.metadata)
+							genre: genreFromMetadata(content.item.metadata),
+							flags: {
+								hasGallery: $('aside[data-asset-type="slideshow"]').length > 0,
+								hasPromoBox: $('aside[data-asset-type="promoBox"]').length > 0,
+								hasPullQuote: $('aside[data-asset-type="pullQuote"]').length > 0,
+								hasTableOfContents: $('.ft-subhead .ft-bold').length > 2,
+								hasLinksInBody: $('a').length > 0,
+								hasVideo: $('aside[data-asset-type="video"]').length > 0 
+							}
 						};
 					})
 			}
