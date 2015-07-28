@@ -9,6 +9,6 @@ module.exports = function (message) {
 		return;
 	} 
 
-	console.log('sinks/stdout', message);
+	console.log('sinks/stdout', JSON.stringify(message));
 
 };
