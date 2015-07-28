@@ -93,6 +93,7 @@ module.exports = function (event) {
 								hasPullQuote: $('aside[data-asset-type="pullQuote"]').length > 0,
 								hasTableOfContents: $('.ft-subhead .ft-bold').length > 2,
 								hasLinksInBody: $('a').length > 0,
+								hasVideo: $('aside[data-asset-type="video"]').length > 0 
 							}
 						};
 					})
