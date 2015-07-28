@@ -12,16 +12,20 @@ module.exports = (event) => {
 	var hasUuid = event.annotations().user && event.annotations().user.uuid;
 
 	if (!hasUuid) {
-		return false;
+		return Promise.resolve({});
+	}
+	
+	console.log('transforms/myft-api', 'fetching', uuid, event.annotations().url.hostname);
+
+	if (event.annotations().url && event.annotations().url.hostname !== 'next.ft.com') {
+		return Promise.resolve({});
 	}
 
 	var uuid = event.annotations().user.uuid;
 
 	metrics.count('pipeline.transforms.myft-api.count', 1);
 	
-	// FIXME Check if this is a next.ft.com request 
-	
-	console.log('transforms/myft-api', 'fetching', uuid);
+	console.log('transforms/myft-api', 'fetching', uuid, event.annotations());
 
 	metrics.count('pipeline.transforms.myft-api.fetch.request', 1);
 	
