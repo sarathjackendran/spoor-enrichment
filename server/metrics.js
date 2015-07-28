@@ -14,8 +14,16 @@ AWS.config.update({
 	"region": "eu-west-1"
 });
 
-require('./utils/metrics/cloudwatch');
-require('./utils/metrics/sqsAttributes');
-require('./utils/metrics/fastly');
+if (!process.env.metrics_cloudwatch) {
+	require('./utils/metrics/cloudwatch');
+}
+
+if (!process.env.metrics_sqs) {
+	require('./utils/metrics/sqsAttributes');
+}
+
+if (!process.env.metrics_fastly) {
+	require('./utils/metrics/fastly');
+}
 
 console.log('collecting metrics');
