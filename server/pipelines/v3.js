@@ -67,7 +67,7 @@ Pipeline.prototype.process = (message) => {
 		// calculate the end time in nano-seconds
 		var end = process.hrtime(start);
 		
-		event.annotate('original', event.body());
+		event.annotate('ingest', event.body());
 		event.annotate('geo', geo);
 		event.annotate('cohort', cohort);
 		event.annotate('validation', isValid);
