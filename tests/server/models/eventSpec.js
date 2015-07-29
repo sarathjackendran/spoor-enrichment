@@ -60,10 +60,16 @@ describe('Event', () => {
 
 	describe('body', () => {
 	
-		it('Get the ingest body via a convenience method', done => {
+		it('Get a value from the ingest body via a convenience method', done => {
 			var e = new EventModel(rawSqs);
 			expect(e.body('videoid')).to.equal(4283366118001);
 			expect(e.body('position').a).to.equal(315.374);
+			done();
+		});
+		
+		it('Get the entire ingest body via a convenience method', done => {
+			var e = new EventModel(rawSqs);
+			expect(e.body().videoid).to.equal(4283366118001);
 			done();
 		});
 		
