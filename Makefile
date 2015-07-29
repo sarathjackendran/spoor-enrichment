@@ -14,6 +14,7 @@ sqs: compile
 	 export CAPI_API_KEY=`cat ~/.ftapi_v2`; \
 	 export SESSION_API_KEY=`cat ~/.session-api`; \
 	 export MYFT_API_KEY=`cat ~/.myft-api`; \
+	 export EGEST_ARN=`cat ~/.egest-arn`; \
 	 node dist/enrichment.js
 
 test: compile
