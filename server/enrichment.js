@@ -25,6 +25,7 @@ var pipeline = new Pipeline();
 // Sinks
 pipeline.on(sinks.kinesis);
 pipeline.on(sinks.sqs);
+pipeline.on(sinks.sns);
 pipeline.on(sinks.stdout);
 
 var sqsStream = () => {
