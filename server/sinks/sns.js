@@ -13,7 +13,7 @@ var arn = process.env.EGEST_ARN;
 
 module.exports = function (message) {
 
-	if (!process.env.sink_sqs) {
+	if (!process.env.sink_sns) {
 		console.log('sinks/sns', 'SNS sink is turned off');
 		return;
 	} 
