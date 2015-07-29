@@ -58,7 +58,7 @@ Pipeline.prototype.process = (message) => {
 				console.log('error', err);
 				return undefined;
 			});
-		}))	
+		}));
 	})
 	.then(annotations => {
 		
@@ -67,6 +67,7 @@ Pipeline.prototype.process = (message) => {
 		// calculate the end time in nano-seconds
 		var end = process.hrtime(start);
 		
+		event.annotate('ingest', event.body());
 		event.annotate('geo', geo);
 		event.annotate('cohort', cohort);
 		event.annotate('validation', isValid);
@@ -87,14 +88,19 @@ Pipeline.prototype.process = (message) => {
 		return Promise.resolve(event);
 
 	})	
-	.then(event => {
+	.then(event => {		// this set of enrichments are dependent on the first set 
 
 		var transforms = [
 			Promise.resolve(event),
 			transform.myFtApi(event)
 		];
 
-		return Promise.all(transforms);
+		return Promise.all(transforms.map(function (p) {	// allow rejections in individual promises without failing  
+			return p.catch(function (err) {
+				console.log('error', err);
+				return undefined;
+			});
+		}));
 	})
 	.then(annotations => {
 		

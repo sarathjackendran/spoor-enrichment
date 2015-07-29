@@ -46,7 +46,7 @@ EventModel.prototype.headers = function (val) {
 }
 
 EventModel.prototype.body = function (val) {
-	return this.ingest._body[val];
+	return (val) ? this.ingest._body[val] : this.ingest._body;
 }
 
 EventModel.prototype.pluck = function (val) {
