@@ -35,14 +35,14 @@ var pluckUuidFromHeaders = function (event) {
 	return article[0];
 }
 
-// 
+//
 module.exports = function (event) {
-	
+
 	if (!process.env.transform_capi_v1 && !process.env.mocha) {
 		console.log('transforms/content-api-v1', 'is switched off');
 		return Promise.resolve({});
 	}
-	
+
 	metrics.count('pipeline.transforms.contentApi_v1.count', 1);
 
 	var uuid = event.pluck('context.content.uuid');
@@ -50,7 +50,7 @@ module.exports = function (event) {
 	if (!uuid) {
 		uuid = pluckUuidFromHeaders(event);
 	}
-	
+
 	if (!uuid) {
 		return Promise.resolve({});
 	}
@@ -75,7 +75,7 @@ module.exports = function (event) {
 			} else {
 				return res.json()
 					.then(content => {
-						
+
 						var $ = cheerio.load((content.item.body && content.item.body.body) || '');
 
 						return {
@@ -93,7 +93,8 @@ module.exports = function (event) {
 								hasPullQuote: $('aside[data-asset-type="pullQuote"]').length > 0,
 								hasTableOfContents: $('.ft-subhead .ft-bold').length > 2,
 								hasLinksInBody: $('a').length > 0,
-								hasVideo: $('aside[data-asset-type="video"]').length > 0 
+								hasVideo: $('aside[data-asset-type="video"]').length > 0,
+								hasStoryPackage: content.item.package.length > 0
 							}
 						};
 					})
