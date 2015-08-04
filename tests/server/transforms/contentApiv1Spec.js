@@ -59,6 +59,7 @@ describe('Content API v1', function() {
 				expect(content_v1.flags.hasPromoBox).to.equal(true);
 				expect(content_v1.flags.hasPullQuote).to.equal(true);
 				expect(content_v1.flags.hasVideo).to.equal(true);
+				expect(content_v1.flags.hasStoryPackage).to.equal(true);
 				done();
 			})
 			.catch(err => console.log(err));
