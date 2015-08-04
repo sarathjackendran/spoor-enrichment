@@ -94,7 +94,7 @@ module.exports = function (event) {
 								hasTableOfContents: $('.ft-subhead .ft-bold').length > 2,
 								hasLinksInBody: $('a').length > 0,
 								hasVideo: $('aside[data-asset-type="video"]').length > 0,
-								hasStoryPackage: content.item.package.length > 0
+								hasStoryPackage: content.item.package && content.item.package.length > 0
 							}
 						};
 					})
