@@ -4,8 +4,8 @@ var fetch	= require('node-fetch');
 var metrics = require('next-metrics');
 
 var abSegments = (ab) => {
-	if (ab && ab.headers && ab.headers.get('x-ft-ab')) {
-		var tests = ab.headers.get('x-ft-ab').split(',');
+	if (ab && ab.headers && ab.headers.get('ft-ab') && ab.headers.get('ft-ab') !== '-') {
+		var tests = ab.headers.get('ft-ab').split(',');
 		var abSegments = {};
 		tests.forEach(function (test) {
 			var tokens = test.split(':');
@@ -14,15 +14,11 @@ var abSegments = (ab) => {
 		return abSegments;
 	} else {
 		metrics.count('pipeline.transforms.abApi.missing_ab_header', 1);
+		return { };
 	}
 };
 
 module.exports = function (event) {
-
-	if (process.env.transform__ab_benchmark && (Math.random() > 0.1)) {
-		console.log('transforms/ab-api', 'filtered message out while benchmarking');
-		return Promise.resolve({});
-	}
 
 	if (!process.env.transform_ab && !process.env.mocha) {
 		console.log('transforms/ab-api', 'is switched off');
@@ -31,26 +27,24 @@ module.exports = function (event) {
 
 	metrics.count('pipeline.transforms.abApi.count', 1);
 	
-	var cookie = event.headers().cookie;
-
-	if (!cookie) {
-		return Promise.resolve({});
-	}
-
-	var match = cookie.match(/FTSESSION=([^;]+)/i);
-	var session = (match) ? match[1] : undefined;
+	var cookie = event.headers().cookie || '';
 	
-	if (!session) {
-		return Promise.resolve({});
-	};
-		
+	// signed in users will have a ft session token
+	var hasSession = cookie.match(/FTSESSION=([^;]+)/i);
+	var session = (hasSession) ? hasSession[1] : undefined;
+	
+	// anonymous users will have a ft allocation id - ref: https://github.com/Financial-Times/next-ab
+	var hasAllocation = cookie.match(/ft-allocation-id=([^;]+)/i);
+	var allocation = (hasAllocation) ? hasAllocation[1] : undefined;
+	
 	console.log('transforms/ab-api', 'fetching', session);
 	metrics.count('pipeline.transforms.abApi.fetch.request', 1);
 
 	return fetch('https://ft-next-ab.herokuapp.com/spoor', {
 			timeout: 2000,
 			headers: {
-				'ft-session-token' : session
+				'ft-session-token' : session,
+				'ft-allocation-id' : allocation
 			}
 		})
 		.then(res => {
