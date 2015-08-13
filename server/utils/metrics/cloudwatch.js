@@ -47,7 +47,6 @@ setInterval(function () {
 					.splice(0, 1)
 					.forEach(function (e) {
 						e.UnixTime = new Date(e.Timestamp).getTime()/1000;
-						console.log('*', e);
 						metrics.count('cloudwatch.' + metric, e.Sum);
 					})
 			}
