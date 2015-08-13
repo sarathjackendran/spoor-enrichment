@@ -25,7 +25,7 @@ var cloudwatch = (metric, threshold) => {
 				reject(err);
 			}
 			
-			var a = data.Datapoints
+			var series = data.Datapoints
 				.sort((a, b) => {
 					return new Date(a.Timestamp) > new Date(b.Timestamp) ? -1 : 1;
 				})
@@ -36,8 +36,15 @@ var cloudwatch = (metric, threshold) => {
 				})
 			
 			resolve({
-				status: a.some(datapoint => !datapoint.ThresholdCrossed),
-				data: a
+				name: metric,
+				ok: series.some(datapoint => !datapoint.ThresholdCrossed),
+				severity: 3,
+				businessImpact: 'None',
+				technicalSummary: 'http://spoor-docs.herokuapp.com/#health',
+				panicGuide: 'http://spoor-docs.herokuapp.com/#panic',
+				checkOutput: '-',
+				threshold: threshold.toString(), 
+				data: series
 			})
 
 		});
@@ -53,11 +60,22 @@ module.exports = (req, res) => {
 			cloudwatch('NumberOfMessagesReceived', v => v < 10000),
 		])
 		.then(metrics => {
-			var [ApproximateNumberOfMessagesVisible, NumberOfMessagesReceived] = metrics;
-			res.status(metrics.every(m => m.status) ? 200 : 500);
-			res.json(metrics);
+			
+			// 503 when a check is failing
+			res.status(metrics.every(m => m.status) ? 200 : 503);
+			
+			res.json({
+				schemaVersion: 1,
+				name: 'spoor-enrichment',
+				description: 'http://spoor-docs.herokuapp.com/#architecture',
+				checks: metrics
+			});
 		})
 		.catch(error => {
-			res.json({ ok: 0 });
+			
+			// 503 when some underlying failure
+			res.status(503);
+			res.json({ error: error });
+		
 		})
 }
