@@ -10,7 +10,6 @@ AWS.config.update({
 var cloudwatch = (metric, threshold) => {
 
 	return new Promise((resolve, reject) => {
-	
 		new AWS.CloudWatch().getMetricStatistics({
 			Statistics: [ "Sum" ],
 			Dimensions: [ {"Name":"QueueName","Value":"spoor-ingest-v2"} ],
@@ -18,27 +17,34 @@ var cloudwatch = (metric, threshold) => {
 			Period: 60,
 			EndTime: new Date().toISOString(),
 			Namespace: "AWS/SQS",
-			StartTime: new Date(new Date() - (60 * 60 * 1000)).toISOString()
+			Unit: "Count",
+			StartTime: new Date(new Date() - (30 * 60 * 1000)).toISOString()
 		}, (err, data) => {
 			
 			if (err) {
 				reject(err);
 			}
 			
-			var a = data.Datapoints
+			var series = data.Datapoints
 				.sort((a, b) => {
 					return new Date(a.Timestamp) > new Date(b.Timestamp) ? -1 : 1;
 				})
 				.slice(0, 3)
 				.map(data => {
-					data.Threshold = threshold;
-					data.ThresholdCrossed = data.Sum > threshold;
+					data.ThresholdCrossed = threshold(data.Sum);
 					return data;
 				})
 			
 			resolve({
-				status: a.some(datapoint => !datapoint.ThresholdCrossed),
-				data: a
+				name: metric,
+				ok: series.some(datapoint => !datapoint.ThresholdCrossed),
+				severity: 3,
+				businessImpact: 'None',
+				technicalSummary: 'http://spoor-docs.herokuapp.com/#health',
+				panicGuide: 'http://spoor-docs.herokuapp.com/#panic',
+				checkOutput: '-',
+				threshold: threshold.toString(), 
+				data: series
 			})
 
 		});
@@ -47,14 +53,29 @@ var cloudwatch = (metric, threshold) => {
 
 module.exports = (req, res) => {
 	
-	res.set('Cache-Control', 'max-age=10');
+	res.set('Cache-Control', 'no-store');
 	
-	cloudwatch('ApproximateNumberOfMessagesVisible', parseInt(req.query.threshold) || 5000)
+	Promise.all([
+			cloudwatch('ApproximateNumberOfMessagesVisible', v => v > 5000),
+			cloudwatch('NumberOfMessagesReceived', v => v < 10000),
+		])
 		.then(metrics => {
-			res.status(metrics.status ? 200 : 500);
-			res.json(metrics);
+			
+			// 503 when a check is failing
+			res.status(metrics.every(m => m.ok) ? 200 : 503);
+			
+			res.json({
+				schemaVersion: 1,
+				name: 'spoor-enrichment',
+				description: 'http://spoor-docs.herokuapp.com/#architecture',
+				checks: metrics
+			});
 		})
 		.catch(error => {
-			res.json({ ok: 0 });
+			
+			// 503 when some underlying failure
+			res.status(503);
+			res.json({ error: error });
+		
 		})
 }
