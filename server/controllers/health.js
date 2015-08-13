@@ -62,7 +62,7 @@ module.exports = (req, res) => {
 		.then(metrics => {
 			
 			// 503 when a check is failing
-			res.status(metrics.every(m => m.status) ? 200 : 503);
+			res.status(metrics.every(m => m.ok) ? 200 : 503);
 			
 			res.json({
 				schemaVersion: 1,
