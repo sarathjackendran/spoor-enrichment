@@ -10,7 +10,6 @@ AWS.config.update({
 var cloudwatch = (metric, threshold) => {
 
 	return new Promise((resolve, reject) => {
-	
 		new AWS.CloudWatch().getMetricStatistics({
 			Statistics: [ "Sum" ],
 			Dimensions: [ {"Name":"QueueName","Value":"spoor-ingest-v2"} ],
@@ -18,7 +17,8 @@ var cloudwatch = (metric, threshold) => {
 			Period: 60,
 			EndTime: new Date().toISOString(),
 			Namespace: "AWS/SQS",
-			StartTime: new Date(new Date() - (60 * 60 * 1000)).toISOString()
+			Unit: "Count",
+			StartTime: new Date(new Date() - (30 * 60 * 1000)).toISOString()
 		}, (err, data) => {
 			
 			if (err) {
@@ -31,8 +31,7 @@ var cloudwatch = (metric, threshold) => {
 				})
 				.slice(0, 3)
 				.map(data => {
-					data.Threshold = threshold;
-					data.ThresholdCrossed = data.Sum > threshold;
+					data.ThresholdCrossed = threshold(data.Sum);
 					return data;
 				})
 			
@@ -47,11 +46,15 @@ var cloudwatch = (metric, threshold) => {
 
 module.exports = (req, res) => {
 	
-	res.set('Cache-Control', 'max-age=10');
+	res.set('Cache-Control', 'no-store');
 	
-	cloudwatch('ApproximateNumberOfMessagesVisible', parseInt(req.query.threshold) || 5000)
+	Promise.all([
+			cloudwatch('ApproximateNumberOfMessagesVisible', v => v > 5000),
+			cloudwatch('NumberOfMessagesReceived', v => v < 10000),
+		])
 		.then(metrics => {
-			res.status(metrics.status ? 200 : 500);
+			var [ApproximateNumberOfMessagesVisible, NumberOfMessagesReceived] = metrics;
+			res.status(metrics.every(m => m.status) ? 200 : 500);
 			res.json(metrics);
 		})
 		.catch(error => {
