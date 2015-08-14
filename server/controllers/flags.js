@@ -70,6 +70,11 @@ module.exports = (req, res) => {
 				description: 'Annotates the event with the FT cohort data (Eg, registered, subscriber etc.)'
 			},
 			{
+				flag: 'transform_context',
+				status: !!process.env.transform_context,
+				description: 'Annotates the event with a fresh context id (if one is not supplied by the event already).'
+			},
+			{
 				flag: 'transform_myft',
 				status: !!process.env.transform_myft,
 				description: 'Annotates the event with information from myFT (next.ft.com only)'
