@@ -64,7 +64,7 @@ describe('Location', function () {
 			}).catch(error)
 	});
 	
-	it('Tokenise the hostname', done => {
+	it('Tokenise the hostname in to domains', done => {
 		var e = new EventModel(rawSqs__url);
 		url(e)
 			.then(u => {
