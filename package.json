@@ -24,6 +24,7 @@
     "moment": "^2.10.3",
     "next-metrics": "^1.7.0",
     "node-fetch": "^1.2.1",
+    "node-uuid": "^1.4.3",
     "ua-parser-js": "^0.7.7"
   },
   "devDependencies": {
