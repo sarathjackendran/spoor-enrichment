@@ -22,7 +22,11 @@ var cloudwatch = (metric, threshold) => {
 		}, (err, data) => {
 			
 			if (err) {
-				reject(err);
+				return reject(err);
+			}
+			
+			if (!data.Datapoints) {
+				return reject('No data returned');
 			}
 			
 			var series = data.Datapoints
