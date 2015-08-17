@@ -8,6 +8,9 @@ var tokenise = function(location) {
 
 	var tokens = url.parse(location);
 	tokens.querystring = (tokens.search) ? querystring.parse(tokens.search.slice(1)) : {};
+	
+	tokens.domains = tokens.hostname.split('.');
+	
 	return tokens;
 }
 
