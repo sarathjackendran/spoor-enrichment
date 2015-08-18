@@ -68,7 +68,7 @@ EventModel.prototype.annotate = function (key, val) {
 }
 
 EventModel.prototype.annotations = function () {
-	return this.egest.annotations;
+	return this.egest.annotations || { };
 }
 
 module.exports = EventModel;
