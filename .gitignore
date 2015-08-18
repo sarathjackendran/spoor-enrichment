@@ -5,3 +5,4 @@ dist-tests
 .haikro-cache
 node-*
 config
+__todo
