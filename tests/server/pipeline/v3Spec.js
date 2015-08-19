@@ -39,7 +39,6 @@ describe('Pipeline', function () {
 		return pipeline
 			.process(message)
 			.then(event => {
-				console.log('*****', spy.lastCall.args[0].egest.annotations);
 				expect(spy.callCount).to.equal(1);
 				done();
 			})

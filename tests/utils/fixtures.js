@@ -4,7 +4,7 @@ var EventModel  = require('../../dist/models').EventModel;
 
 const event = name => {
 	var f = fs.readFileSync(`./tests/fixtures/${name}`, { encoding: 'utf-8' });
-	return new EventModel(f);
+	return new EventModel(JSON.parse(f));
 } 
 
 const json = name => fs.readFileSync(`./tests/fixtures/${name}`, { encoding: 'utf-8' });
@@ -13,7 +13,6 @@ const sqs = new Map([
 	['content-id', event('sqs/content-id')],
 	['context-id', event('sqs/context-id')],
 	['event', event('sqs/event')],
-	['invalid-event', event('sqs/valid-event')],
 	['no-cohorts', event('sqs/no-cohorts')],
 	['no-message', event('sqs/no-message')],
 	['no-referrer', event('sqs/no-referrer')],
@@ -24,7 +23,8 @@ const sqs = new Map([
 	['session-id', event('sqs/session-id')],
 	['time-offset', event('sqs/time-offset')],
 	['url', event('sqs/url')],
-	['user-agent', event('sqs/user-agent')]
+	['user-agent', event('sqs/user-agent')],
+	['valid-event', event('sqs/valid-event')]
 ]);
 
 const capi_v1 = new Map([
