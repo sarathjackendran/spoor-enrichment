@@ -1,6 +1,6 @@
 
-var fs			= require('fs');
-var EventModel	= require('../../dist/models').EventModel;
+var fs          = require('fs');
+var EventModel  = require('../../dist/models').EventModel;
 
 const event = name => {
 	var f = fs.readFileSync(`./tests/fixtures/${name}`, { encoding: 'utf-8' });
