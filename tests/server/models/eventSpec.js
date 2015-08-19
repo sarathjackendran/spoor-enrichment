@@ -107,7 +107,7 @@ describe('Event', () => {
 			done();
 		});
 		
-		it.only('Should return an empty object when there are no annotations', done => {
+		it('Should return an empty object when there are no annotations', done => {
 			var e = new EventModel(rawSqs);
 			expect(e.annotations()).to.deep.equal({});
 			done();
