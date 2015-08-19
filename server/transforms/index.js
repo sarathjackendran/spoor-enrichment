@@ -6,6 +6,7 @@ module.exports.ingestQueueMetadata	= require('./ingestQueueMetadata');
 module.exports.url					= require('./url');
 module.exports.cohort				= require('./cohort');
 module.exports.context				= require('./context-id');
+module.exports.countedContent		= require('./counted-content');
 
 // http based
 module.exports.sessionApi			= require('./sessionApi');

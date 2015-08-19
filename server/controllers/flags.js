@@ -78,7 +78,12 @@ module.exports = (req, res) => {
 				flag: 'transform_myft',
 				status: !!process.env.transform_myft,
 				description: 'Annotates the event with information from myFT (next.ft.com only)'
-			}
+			},
+			{
+				flag: 'transform_countedcontent',
+				status: !!process.env.transform_countedcontent,
+				description: 'Classifies articles as counted content (i.e. behind the paywall)'
+			},
 		],
 		sinks: [
 			{

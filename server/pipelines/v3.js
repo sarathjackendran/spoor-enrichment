@@ -92,7 +92,8 @@ Pipeline.prototype.process = (message) => {
 
 		var transforms = [
 			Promise.resolve(event),
-			transform.myFtApi(event)
+			transform.myFtApi(event),
+			transform.countedContent(event)
 		];
 
 		return Promise.all(transforms.map(function (p) {	// allow rejections in individual promises without failing  
@@ -103,12 +104,13 @@ Pipeline.prototype.process = (message) => {
 		}));
 	})
 	.then(annotations => {
-		
-		var [event, userPrefs] = annotations;
-		
+
+		var [event, userPrefs, countedContent] = annotations;
+
 		event.annotate('userPrefs', userPrefs);
-	
-		//console.log(JSON.stringify(event.annotations()));
+		event.annotate('countedCounted', countedContent);
+
+		console.log(JSON.stringify(event));
 
 		// calculate the end time in nano-seconds
 		var end = process.hrtime(start);
