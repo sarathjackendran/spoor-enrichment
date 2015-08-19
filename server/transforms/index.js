@@ -14,3 +14,4 @@ module.exports.contentApi			= require('./contentApi');
 module.exports.contentApi_v1		= require('./contentApi-v1');
 module.exports.abApi				= require('./abApi');
 module.exports.myFtApi				= require('./myFtApi');
+module.exports.deviceAtlas			= require('./device-atlas');

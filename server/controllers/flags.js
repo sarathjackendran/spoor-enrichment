@@ -84,6 +84,11 @@ module.exports = (req, res) => {
 				status: !!process.env.transform_countedcontent,
 				description: 'Classifies articles as counted content (i.e. behind the paywall)'
 			},
+			{
+				flag: 'transform_device_atlas',
+				status: !!process.env.transform_device_atlas,
+				description: 'Annotates the event with a response from the Device Atlas API.'
+			}
 		],
 		sinks: [
 			{
