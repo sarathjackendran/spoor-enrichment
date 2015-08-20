@@ -2,11 +2,13 @@
 var fs          = require('fs');
 var EventModel  = require('../../dist/models').EventModel;
 
+// return a stubbed instance of event model
 const event = name => {
-	var f = fs.readFileSync(`./tests/fixtures/${name}`, { encoding: 'utf-8' });
+	let f = fs.readFileSync(`./tests/fixtures/${name}`, { encoding: 'utf-8' });
 	return new EventModel(JSON.parse(f));
 } 
 
+// returns a plain json fixture
 const json = name => fs.readFileSync(`./tests/fixtures/${name}`, { encoding: 'utf-8' });
 
 const sqs = new Map([
