@@ -3,15 +3,16 @@ var url		= require('url');
 var fetch	= require('node-fetch');
 var metrics = require('next-metrics');
 
-var abSegments = (ab) => {
-	if (ab && ab.headers && ab.headers.get('ft-ab') && ab.headers.get('ft-ab') !== '-') {
-		var tests = ab.headers.get('ft-ab').split(',');
-		var abSegments = {};
+var abSegments = ab => {
+	console.log('transforms/ab-api', ab.headers.get('x-ft-ab'));
+	if (ab && ab.headers && ab.headers.get('x-ft-ab') && ab.headers.get('x-ft-ab') !== '-') {
+		var tests = ab.headers.get('x-ft-ab').split(',');
+		var segments = {};
 		tests.forEach(function (test) {
 			var tokens = test.split(':');
-			abSegments[tokens[0]] = tokens[1];
+			segments[tokens[0]] = tokens[1];
 		});
-		return abSegments;
+		return segments;
 	} else {
 		metrics.count('pipeline.transforms.abApi.missing_ab_header', 1);
 		return { };
