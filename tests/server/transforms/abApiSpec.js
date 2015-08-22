@@ -37,7 +37,7 @@ describe('AB API', function() {
 	
 	it('Convert the AB segmentation to an object', done => {
 		this.mitm.on("request", function(req, res) {
-			res.setHeader('ft-ab', 'foo:on,boo:off');
+			res.setHeader('x-ft-ab', 'foo:on,boo:off');
 			res.end();
 		})
 		abApi(new EventModel(rawSqs))
@@ -49,7 +49,7 @@ describe('AB API', function() {
 	
 	it('Account for failed segmentation (hyphenated headers)', done => {
 		this.mitm.on("request", function(req, res) {
-			res.setHeader('ft-ab', '-');
+			res.setHeader('x-ft-ab', '-');
 			res.end();
 		})
 		abApi(new EventModel(rawSqs))
