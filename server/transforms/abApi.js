@@ -4,7 +4,7 @@ var fetch	= require('node-fetch');
 var metrics = require('next-metrics');
 
 var abSegments = ab => {
-	console.log('transforms/ab-api CC', ab.headers.get('x-ft-ab'));
+	console.log('transforms/ab-api', ab.headers.get('x-ft-ab'));
 	if (ab && ab.headers && ab.headers.get('x-ft-ab') && ab.headers.get('x-ft-ab') !== '-') {
 		var tests = ab.headers.get('x-ft-ab').split(',');
 		var segments = {};
@@ -49,14 +49,14 @@ module.exports = function (event) {
 			}
 		})
 		.then(res => {
-			console.log('transforms/ab-api AA', session, res.status, res.headers.get('x-ft-ab'));
+			console.log('transforms/ab-api', session, res.status, res.headers.get('x-ft-ab'));
 			metrics.count('pipeline.transforms.abApi.fetch.response.' + res.status, 1);
 			if (res.status !== 200) {
 				console.log('transforms/ab-api', 'status was not a 200', res.status);
 				return { } 
 			}
 			var tokens = abSegments(res);
-			console.log('transforms/ab-api BB', session, JSON.stringify(tokens));
+			console.log('transforms/ab-api', session, JSON.stringify(tokens));
 			return tokens;
 		})
 		.catch((err) => {
