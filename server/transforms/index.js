@@ -4,6 +4,7 @@ module.exports.userAgent			= require('./userAgent');
 module.exports.time					= require('./time');
 module.exports.ingestQueueMetadata	= require('./ingestQueueMetadata');
 module.exports.url					= require('./url');
+module.exports.referrerType = require('./referrerType');
 module.exports.cohort				= require('./cohort');
 module.exports.context				= require('./context-id');
 module.exports.countedContent		= require('./counted-content');

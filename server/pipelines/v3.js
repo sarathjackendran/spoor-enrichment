@@ -17,19 +17,6 @@ var roundedHiResTime = (time) => {
 	return Math.round(timeInSeconds * 10) * 100;
 }
 
-var getReferrerType = (referrer) => {
-	var referrerType = '';
-	referrer = referrer || '';
-	if(referrer.indexOf('www.google.co.uk') !== -1) {
-		referrerType = 'Search';
-	} else if(referrer.indexOf('www.facebook.com') !== -1) {
-		referrerType = 'Social Media';
-	} else {
-		referrerType = 'Direct';
-	}
-	return referrerType;
-}
-
 /* FIXME maybe just export normal event listener */
 Pipeline.prototype.on = (fn) => { emitter.on('enriched', fn) };
 
@@ -66,7 +53,7 @@ Pipeline.prototype.process = (message) => {
 			transform.abApi(event)
 		];
 
-		return Promise.all(transforms.map(function (p) {	// allow rejections in individual promises without failing  
+		return Promise.all(transforms.map(function (p) {	// allow rejections in individual promises without failing
 			return p.catch(function (err) {
 				console.log('error', err);
 				return undefined;
@@ -88,7 +75,6 @@ Pipeline.prototype.process = (message) => {
 		event.annotate('time', time);
 		event.annotate('ua', ua);
 		event.annotate('referrer', url.referrer);
-		event.annotate('referrer', getReferrerType(url.referrer));
 		event.annotate('url', url.location);
 		event.annotate('user', session);
 		event.annotate('content', capi2);
@@ -107,10 +93,11 @@ Pipeline.prototype.process = (message) => {
 		var transforms = [
 			Promise.resolve(event),
 			transform.myFtApi(event),
-			transform.countedContent(event)
+			transform.countedContent(event),
+			transform.referrerType(event)
 		];
 
-		return Promise.all(transforms.map(function (p) {	// allow rejections in individual promises without failing  
+		return Promise.all(transforms.map(function (p) {	// allow rejections in individual promises without failing
 			return p.catch(function (err) {
 				console.log('error', err);
 				return undefined;
@@ -119,10 +106,11 @@ Pipeline.prototype.process = (message) => {
 	})
 	.then(annotations => {
 
-		var [event, userPrefs, countedContent] = annotations;
+		var [event, userPrefs, countedContent, referrer] = annotations;
 
 		event.annotate('userPrefs', userPrefs);
 		event.annotate('countedCounted', countedContent);
+		event.annotate('referrerType', referrer.referrerType);
 
 		console.log(JSON.stringify(event));
 
