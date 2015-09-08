@@ -63,19 +63,6 @@ var sqsStream = () => {
 						// FIXME allow more than one message. FIXME. ideally we wouldn't do a JSON.stringify.
 
 						if (process.env.pipeline) {
-							// Get the referrer classfication file before proceeding for enrichment.
-							new Promise((resolve, reject) => {
-			 					var req = https.get(referrersUrl, (res) => {
-			 						res.pipe(fs.createWriteStream(referrersFilePath));
-			 						res.on('end', () => {
-			 							resolve("Retrieved referrer classfications");
-			 						});
-			 					});
-			 					req.on('error', (e) => {
-			 						resolve("Referrer classfications retrieval error");
-			 					});
-			 				}).then(function(fileReadStatus) {
-								console.log(fileReadStatus);
 								data.Messages.forEach((message, i) => {
 
 									metrics.count('ingest.consumer.receiveMessage.found', 1);
@@ -105,7 +92,6 @@ var sqsStream = () => {
 											})
 										}).catch();
 								});
-							});
 						}
 				}
 
